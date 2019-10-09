@@ -144,5 +144,3 @@ class DataHandler {
 }
 
 module.exports = DataHandler;
-const handler = new DataHandler();
-console.log(handler.getClientDetails(1298096));
