@@ -9,7 +9,21 @@ A data handler for the VATSIM status system coded in JavaScript
 
 ## Usage
 
-  # To be updated
+  ```javascript
+  const DataHandler = require('vatsim-data-handler');
+  const handler = new DataHandler();
+
+  console.log(handler.getClientCount());
+  ```
+  This would log the number of clients connected to the VATSIM network
+
+## Available methods
+
+* `getClientCount()` - Returns the number of clients connected to the VATSIM network
+* `getPilotCount()` - Returns the number of pilots connected to the VATSIM network
+* `getControllerCount()` - Returns the number of controllers connected to the VATSIM network
+* `getAirportInfo(airport)` - Returns the details of pilots into or out of a certain airport along with the controllers controlling that airport, the airport argument is a 4 letter ICAO code
+* `getPopularAirports()` - Returns a list of the top 10 airports for arriving and departing aircraft
 
 
 ## Tests
