@@ -1,0 +1,36 @@
+{
+  "name": "vatsim-data-handler",
+  "version": "0.1.0",
+  "description": "A data handler for the VATSIM status system",
+  "main": "handler.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hcphoon01/VATSIM-Data-Handler.git"
+  },
+  "keywords": [
+    "VATSIM",
+    "JavaScript",
+    "Data",
+    "Handler"
+  ],
+  "author": "Harry Cameron <hcphoon01@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hcphoon01/VATSIM-Data-Handler/issues"
+  },
+  "homepage": "https://github.com/hcphoon01/VATSIM-Data-Handler#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-json": "^1.0.0",
+    "mocha": "^6.2.1",
+    "nodemon": "^1.19.3"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0",
+    "sync-request": "^6.1.0"
+  }
+}
