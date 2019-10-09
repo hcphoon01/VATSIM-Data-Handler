@@ -5,7 +5,7 @@
   "main": "handler.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "cover": "istanbul cover _mocha -- -R spec test/*"
+    "cover": "node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec test/*"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "chai": "^4.2.0",
     "chai-json": "^1.0.0",
     "coveralls": "^3.0.6",
-    "istanbul": "^0.4.5",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^6.2.1",
     "nodemon": "^1.19.3"
   },
