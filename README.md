@@ -1,4 +1,4 @@
-# VATSIM-Data-Handler
+# VATSIM Data Handler [![Build Status](https://travis-ci.org/hcphoon01/VATSIM-Data-Handler.svg?branch=master)](https://travis-ci.org/hcphoon01/VATSIM-Data-Handler) [![Coverage Status](https://coveralls.io/repos/github/hcphoon01/VATSIM-Data-Handler/badge.svg?branch=master)](https://coveralls.io/github/hcphoon01/VATSIM-Data-Handler?branch=master)
 =========
 
 A data handler for the VATSIM status system coded in JavaScript
