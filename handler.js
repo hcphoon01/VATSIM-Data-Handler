@@ -1,128 +1,134 @@
 const fs = require('fs');
 const request = require('request');
 
-class DataHandler{
-    
-    constructor(overwrite = null){
-        if(this.shouldUpdate() && !overwrite) {this.update()};
+class DataHandler {
+    constructor(overwrite = null) {
+        if (this.shouldUpdate() && !overwrite) this.update();
     }
 
-    shouldUpdate(){
-        if(!fs.existsSync("vatsimData.json")) {return true};
+    shouldUpdate() {
+        if (!fs.existsSync('vatsimData.json')) return true;
 
-        const file = fs.readFileSync("vatsimData.json");
+        const file = fs.readFileSync('vatsimData.json');
         const parsed = JSON.parse(file)
         const oldDT = Date.parse(parsed['updated_date']);
-        
+
         const dateDifference = Date.now() - oldDT;
         const minutes = Math.floor(dateDifference / 60000);
 
-        if (minutes > 2) {return true};
-    }
-    
-    async update(){
-        const body = await this.downloadFile();
-        const parsedJSON = JSON.parse(body);
-        parsedJSON['updated_date'] = new Date();
-        const json = JSON.stringify(parsedJSON);
-        fs.writeFileSync("vatsimData.json", json);
+        if (minutes > 2) return true;
+
+        return false; // Make sure that we return at least something if all the other conditions fail
     }
 
-    downloadFile(){
+    async update() {
+        const body = await this.downloadFile();
+        const parsedJSON = JSON.parse(body);
+
+        parsedJSON['updated_date'] = new Date();
+        const json = JSON.stringify(parsedJSON);
+        fs.writeFileSync('vatsimData.json', json);
+    }
+
+    downloadFile() {
         return new Promise((resolve, reject) => {
-            request("http://us.data.vatsim.net/vatsim-data.json", (error, response, body) => {
+            request('http://us.data.vatsim.net/vatsim-data.json', (error, response, body) => {
                 if (error) reject(error);
+
                 if (response.statusCode != 200) {
                     reject('Invalid status code <' + response.statusCode + '>');
                 }
+
                 resolve(body);
             });
         });
     }
 
-    getClientCount(){
-        const file = fs.readFileSync("vatsimData.json");
-        const parsed = JSON.parse(file);
-        
-        return(parsed['pilots'].length + parsed['controllers'].length)
+    // Retrieves the file and parses it into JSON
+    loadFile() {
+        return JSON.parse(fs.readFileSync('vatsimData.json'));
     }
 
-    getPilotCount(){
-        const file = fs.readFileSync("vatsimData.json");
-        const parsed = JSON.parse(file);
-
-        return(parsed['pilots'].length)
+    getClientCount() {
+        const parsed = this.loadFile();
+        return (parsed['pilots'].length + parsed['controllers'].length);
     }
 
-    getControllerCount(){
-        const file = fs.readFileSync("vatsimData.json");
-        const parsed = JSON.parse(file);
-
-        return(parsed['controllers'].length)
+    getPilotCount() {
+        const parsed = this.loadFile();
+        return parsed['pilots'].length;
     }
 
-    getAirportInfo(airport = null){
-        const file = fs.readFileSync("vatsimData.json");
-        const parsed = JSON.parse(file);
+    getControllerCount() {
+        const parsed = this.loadFile();
+        return parsed['controllers'].length;
+    }
+
+    getAirportInfo(airport = null) {
+        const parsed = this.loadFile();
         let airportInfo = [];
 
         parsed['pilots'].forEach(pilot => {
-            if(pilot['plan']['departure'] == airport || pilot['plan']['arrival'] == airport){
-                airportInfo[airportInfo.length] = pilot;
+            if (pilot['plan']['departure'] === airport || pilot['plan']['arrival'] === airport) {
+                airportInfo.push(pilot);
             }
         });
 
         parsed['controllers'].forEach(controller => {
-            if(controller['callsign'].includes(airport) && controller['frequency'] != 99998){
-                airportInfo[airportInfo.length] = controller;
+            if (controller['callsign'].includes(airport) && controller['frequency'] != 99998) {
+                airportInfo.push(controller);
             }
-        })
-        
-        return(airportInfo);
+        });
+
+        return airportInfo;
     }
 
-    getPopularAirports(){
-        const file = fs.readFileSync("vatsimData.json");
-        const parsed = JSON.parse(file);
+    getPopularAirports() {
+        const parsed = this.loadFile();
         let airportList = [];
         let newAirport;
 
         parsed['pilots'].forEach(pilot => {
-            if (pilot.plan.departure != ''){
+            if (pilot.plan.departure !== '') {
                 newAirport = true;
-                for(var i = 0; i < airportList.length; i++) {
-                    if (airportList[i].id == pilot.plan.departure) {
-                        airportList[i].count += 1
-                        newAirport = false; 
+
+                airportList.forEach(airport => {
+                    if (airport.id === pilot.plan.departure) {
+                        airport.count++;
+                        newAirport = false;
                     }
-                }
-                if (newAirport == true){
+                });
+
+                if (newAirport) {
                     airportList.push({
                         id: pilot['plan']['departure'],
                         count: 1
-                    })     
+                    });
                 }
             }
-            if (pilot.plan.arrival != ''){
+
+            if (pilot.plan.arrival !== '') {
                 newAirport = true;
-                for(var i = 0; i < airportList.length; i++) {
-                    if (airportList[i].id == pilot.plan.arrival) {
-                        airportList[i].count += 1
-                        newAirport = false; 
+
+                airportList.forEach(airport => {
+                    if (airport.id === pilot.plan.arrival) {
+                        airport.count++;
+                        newAirport = false;
                     }
-                }
-                if (newAirport == true){
+                });
+
+                if (newAirport) {
                     airportList.push({
                         id: pilot['plan']['arrival'],
                         count: 1
-                    })     
+                    });
                 }
             }
-        })
-        airportList.sort(function(a, b){
-            return b.count-a.count
         });
-        return(airportList.slice(0,10))
+
+        airportList.sort((a, b) => b.count - a.count);
+
+        return airportList.slice(0,10);
     }
 }
 
