@@ -1,8 +1,36 @@
 const DataHandler = require('../handler');
 const expect = require('chai').expect;
+const fs = require('fs');
+const path = require('path');
 const handler = new DataHandler();
 
+const jsonFile = path.basename('../vatsimData.json');
+
+const obj = {
+	"server": "UK-1",
+	"callsign": "EGLL_SUP",
+	"member": {
+	"cid": 9999999,
+	"name": "Test User"
+	},
+	"rating": 11,
+	"frequency": 99998,
+	"facility": 0,
+	"range": 300,
+	"latitude": -4.67434,
+	"longitude": 55.52184
+};
+
 describe('#Data Handling', () => {
+	before(() => {
+		const file = fs.readFileSync(jsonFile);
+		const parsed = JSON.parse(file);
+		
+		parsed.controllers.push(obj);
+		const json = JSON.stringify(parsed);
+		fs.writeFileSync('vatsimData.json', json);
+	});
+
     describe(`getCount('all')`, () => {
         it('should get all clients', () => {
             expect(handler.getCount('all')).to.be.above(0);
@@ -34,7 +62,11 @@ describe('#Data Handling', () => {
 
         it('should return an empty array when no airport is given', () => {
             expect(handler.getAirportInfo()).to.be.an('array').that.is.empty; // jshint ignore:line
-        });
+		});
+		
+		it('should not include users with the frequency of 199.998', () =>{
+			expect(handler.getAirportInfo('EGLL')).to.be.an('array').that.does.not.include(obj);
+		});
     });
 
     describe('getPopularAirports()', () => {
@@ -47,5 +79,15 @@ describe('#Data Handling', () => {
 		it('should return undefined for a non connected CID', () => {
 			expect(handler.getClientDetails(999999)).to.be.undefined; //jshint ignore:line
 		});
+	});
+
+	after(() => {
+		const file = fs.readFileSync(jsonFile);
+		const parsed = JSON.parse(file);
+
+		parsed.controllers.splice(-1,1);
+
+		const json = JSON.stringify(parsed);
+		fs.writeFileSync('vatsimData.json', json);
 	});
 });

@@ -44,7 +44,7 @@ class DataHandler {
 				if (response.statusCode !== 200) {
 					reject('Invalid status code <' + response.statusCode + '>');
 				}
-				
+
 				resolve(body);
 			});
 		});
@@ -139,6 +139,19 @@ class DataHandler {
 			}
 		});
 		return pilotDetails[0];
+	}
+
+	getSupervisors() {
+		const parsed = this.loadFile();
+		let supervisorList = [];
+
+		parsed.controllers.map(controller => {
+			if (controller.rating === 11 || controller.rating === 12){
+				supervisorList.push(controller);
+			}
+		});
+
+		return supervisorList;
 	}
 }
 
