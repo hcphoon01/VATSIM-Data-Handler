@@ -54,19 +54,18 @@ class DataHandler {
 		return(JSON.parse(fs.readFileSync('vatsimData.json')));
 	}
 
-	getClientCount() {
+	getCount(type) {
 		const parsed = this.loadFile();
-		return (parsed.pilots.length + parsed.controllers.length);
-	}
-
-	getPilotCount() {
-		const parsed = this.loadFile();
-		return (parsed.pilots.length);
-	}
-
-	getControllerCount() {
-		const parsed = this.loadFile();
-		return (parsed.controllers.length);
+		switch (type){
+			case 'all':
+				return (parsed.pilots.length + parsed.controllers.length);
+			case 'pilots':
+				return (parsed.pilots.length);
+			case 'controllers':
+				return (parsed.controllers.length);
+			default:
+				return undefined;
+		}
 	}
 
 	getAirportInfo(airport = null) {
