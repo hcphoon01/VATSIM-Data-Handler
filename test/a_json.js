@@ -5,12 +5,11 @@ const expect = require('chai').expect;
 const path = require('path');
 const fs = require('fs');
 
-let handler;
+const handler = new DataHandler();
 const json = path.basename('../vatsimData.json');
 
 describe('#json handling', () => {
     it('should create vatsimData.json', async () => {
-        handler = new DataHandler(overwrite = true);
         await handler.update();
         expect(json).to.be.a.jsonFile();
 	});

@@ -2,8 +2,8 @@ const fs = require('fs');
 const request = require('request');
 
 class DataHandler {
-	constructor(overwrite = null) {
-		if (this.shouldUpdate() && !overwrite) this.update();
+	constructor() {
+		this.shouldUpdate();
 	}
 
 	shouldUpdate() {
@@ -16,7 +16,7 @@ class DataHandler {
 		const dateDifference = Date.now() - oldDT;
 		const minutes = Math.floor(dateDifference / 60000);
 
-		if (minutes > 2) return true;
+		if (minutes > 2) this.update();
 
 		return false;
 	}
@@ -51,6 +51,7 @@ class DataHandler {
 	}
 
 	loadFile(){
+		this.shouldUpdate();
 		return(JSON.parse(fs.readFileSync('vatsimData.json')));
 	}
 

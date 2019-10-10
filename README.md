@@ -1,9 +1,11 @@
 [build_status]: https://travis-ci.org/hcphoon01/VATSIM-Data-Handler.svg?branch=master
 [coverage_status]: https://coveralls.io/repos/github/hcphoon01/VATSIM-Data-Handler/badge.svg?branch=master
+[discord_badge]: https://img.shields.io/discord/580346191854960641
+[version_badge]: https://img.shields.io/github/v/tag/hcphoon01/vatsim-data-handler
+[license_badge]: https://img.shields.io/github/license/hcphoon01/vatsim-data-handler
 [discord_invite]: https://discord.gg/fwK8QfD
 
 # VATSIM Data Handler 
-======================================
 
 A data handler for the VATSIM status system coded in JavaScript
 
@@ -13,6 +15,9 @@ A data handler for the VATSIM status system coded in JavaScript
 |-----------------|--------------------------------------------------------------------------------------|---------------------------------|
 | Build           | [TravisCI](https://travis-ci.org/hcphoon01/VATSIM-Data-Handler)                      | ![build_status]                 |
 | Coverage        | [Coveralls](https://coveralls.io/github/hcphoon01/VATSIM-Data-Handler?branch=master) | ![coverage_status]              |
+| Discord		  | [Discord][discord_invite]                  											 | ![discord_badge]            	   |
+| Github Version  | [GitHub](https://img.shields.io/github/package-json/v/hcphoon01/vatsim-data-handler) | ![version_badge]                |
+| License         | [License](https://github.com/hcphoon01/VATSIM-Data-Handler/blob/master/LICENSE)      | ![license_badge]                |
 
 ## Installation
 
