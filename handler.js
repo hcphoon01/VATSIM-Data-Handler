@@ -44,7 +44,7 @@ class DataHandler {
 				if (response.statusCode !== 200) {
 					reject('Invalid status code <' + response.statusCode + '>');
 				}
-
+				
 				resolve(body);
 			});
 		});

@@ -25,5 +25,9 @@ describe('#json handling', () => {
         const file = fs.readFileSync(json);
         const parsed = JSON.parse(file);
         expect(parsed).to.include.all.keys('pilots', 'controllers');
-    });
+	});
+	
+	it('should check to see if the json file needs updating', () => {
+		expect(handler.shouldUpdate()).to.equal(false);
+	});
 });
