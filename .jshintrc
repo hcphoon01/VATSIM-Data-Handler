@@ -1,4 +1,5 @@
 {
 	"esversion": 8,
-	"eqeqeq": true
+	"eqeqeq": true,
+	"expr": true
 }

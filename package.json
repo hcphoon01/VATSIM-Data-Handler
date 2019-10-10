@@ -5,8 +5,7 @@
   "main": "handler.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "cover": "node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec test/*",
-    "lint": "eslint"
+    "cover": "node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec test/*"
   },
   "repository": {
     "type": "git",

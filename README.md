@@ -1,8 +1,9 @@
 [build_status]: https://travis-ci.org/hcphoon01/VATSIM-Data-Handler.svg?branch=master
 [coverage_status]: https://coveralls.io/repos/github/hcphoon01/VATSIM-Data-Handler/badge.svg?branch=master
+[discord_invite]: https://discord.gg/fwK8QfD
 
 # VATSIM Data Handler 
-=========
+======================================
 
 A data handler for the VATSIM status system coded in JavaScript
 
@@ -44,6 +45,10 @@ Deprecated
 ## Tests
 
   `npm test`
+
+## Support
+
+If you have any issues or feature requests, either create an issue or you can join my [Discord Server][discord_invite].
 
 ## Contributing
 

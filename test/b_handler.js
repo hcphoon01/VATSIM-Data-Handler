@@ -51,17 +51,17 @@ describe('#Data Handling', () => {
 	
 	describe(`getCount('test')`, () => {
         it('should return undefined when a random type is inputted', () => {
-            expect(handler.getCount('test')).to.be.undefined; //jshint ignore:line
+            expect(handler.getCount('test')).to.be.undefined;
         });
     });
 
     describe('getAirportInfo()', () => {
         it('should get airport information for a given airport, EGLL', () => {
-            expect(handler.getAirportInfo('EGLL')).to.be.an('array').that.is.not.empty; // jshint ignore:line
+            expect(handler.getAirportInfo('EGLL')).to.be.an('array').that.is.not.empty;
         });
 
         it('should return an empty array when no airport is given', () => {
-            expect(handler.getAirportInfo()).to.be.an('array').that.is.empty; // jshint ignore:line
+            expect(handler.getAirportInfo()).to.be.an('array').that.is.empty;
 		});
 		
 		it('should not include users with the frequency of 199.998', () =>{
@@ -77,7 +77,13 @@ describe('#Data Handling', () => {
 	
 	describe('getClientDetails(cid)', () => {
 		it('should return undefined for a non connected CID', () => {
-			expect(handler.getClientDetails(999999)).to.be.undefined; //jshint ignore:line
+			expect(handler.getClientDetails(999999)).to.be.undefined;
+		});
+	});
+
+	describe('getSupervisors()', () => {
+		it('should return a list of supervisors connected to the VATSIM network, including a test supervisor', () => {
+			expect(handler.getSupervisors()).to.be.an('array').that.is.not.empty;
 		});
 	});
 
