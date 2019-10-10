@@ -6,8 +6,8 @@ class DataHandler {
 		this.shouldUpdate();
 	}
 
-	shouldUpdate() {
-		if (!fs.existsSync('vatsimData.json')) return true;
+	async shouldUpdate() {
+		if (!fs.existsSync('vatsimData.json')) await this.update();
 
 		const file = fs.readFileSync('vatsimData.json');
 		const parsed = JSON.parse(file);
@@ -16,18 +16,20 @@ class DataHandler {
 		const dateDifference = Date.now() - oldDT;
 		const minutes = Math.floor(dateDifference / 60000);
 
-		if (minutes > 2) this.update();
+		if (minutes > 2) await this.update();
 
 		return false;
 	}
 
-	async update() {
-		const body = await this.downloadFile();
+	async update() {	
+		let body = await this.downloadFile();
 		const parsedJSON = JSON.parse(body);
 
 		parsedJSON.updated_date = new Date();
 		const json = JSON.stringify(parsedJSON);
-		fs.writeFileSync('vatsimData.json', json);
+		fs.writeFileSync('vatsimData.json', json, function(err, result) {
+			if(err) console.log(err);
+		});
 	}
 
 	downloadFile() {
@@ -50,13 +52,13 @@ class DataHandler {
 		});
 	}
 
-	loadFile(){
-		this.shouldUpdate();
-		return(JSON.parse(fs.readFileSync('vatsimData.json')));
+	async loadFile(){
+		await this.shouldUpdate();
+		return(JSON.parse(fs.readFileSync('vatsimData.json', {encoding:'utf-8'})));
 	}
 
-	getCount(type) {
-		const parsed = this.loadFile();
+	async getCount(type) {
+		const parsed = await this.loadFile();
 		switch (type){
 			case 'all':
 				return (parsed.pilots.length + parsed.controllers.length);
@@ -69,8 +71,8 @@ class DataHandler {
 		}
 	}
 
-	getAirportInfo(airport = null) {
-		const parsed = this.loadFile();
+	async getAirportInfo(airport = null) {
+		const parsed = await this.loadFile();
 		let airportInfo = [];
 
 		parsed.pilots.forEach(pilot => {
@@ -87,8 +89,8 @@ class DataHandler {
 		return airportInfo;
 	}
 
-	getPopularAirports() {
-		const parsed = this.loadFile();
+	async getPopularAirports() {
+		const parsed = await this.loadFile();
 		let airportList = [];
 		let newAirport;
 
@@ -130,8 +132,8 @@ class DataHandler {
 		return(airportList.slice(0,10));
 	}
 
-	getClientDetails(cid) {
-		const parsed = this.loadFile();
+	async getClientDetails(cid) {
+		const parsed = await this.loadFile();
 		let pilotDetails = [];
 
 		parsed.pilots.forEach(pilot => {
@@ -142,8 +144,8 @@ class DataHandler {
 		return pilotDetails[0];
 	}
 
-	getSupervisors() {
-		const parsed = this.loadFile();
+	async getSupervisors() {
+		const parsed = await this.loadFile();
 		let supervisorList = [];
 
 		parsed.controllers.map(controller => {
