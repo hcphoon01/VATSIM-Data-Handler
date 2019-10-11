@@ -1,5 +1,9 @@
 const DataHandler = require('../handler');
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+chai.should();
+
 const fs = require('fs');
 const path = require('path');
 const handler = new DataHandler();
@@ -22,6 +26,16 @@ const obj = {
 };
 
 describe('#Data Handling', () => {
+	var check = function(done){
+		if (fs.existsSync(jsonFile)) done();
+		else (setTimeout( () => {
+			check(done);
+		}, 100));
+	};
+	before((done) => {
+		check(done);
+	});
+
 	before(() => {
 		const file = fs.readFileSync(jsonFile);
 		const parsed = JSON.parse(file);
@@ -33,57 +47,57 @@ describe('#Data Handling', () => {
 
     describe(`getCount('all')`, () => {
         it('should get all clients', () => {
-            expect(handler.getCount('all')).to.be.above(0);
+            (handler.getCount('all')).should.eventually.be.above(0);
         });
     });
 
     describe(`getCount('pilots')`, () => {
         it('should get all pilots', () => {
-            expect(handler.getCount('pilots')).to.be.above(0);
+            (handler.getCount('pilots')).should.eventually.be.above(0);
         });
     });
 
     describe(`getCount('controllers')`, () => {
         it('should get all controllers', () => {
-            expect(handler.getCount('controllers')).to.be.above(0);
+            (handler.getCount('controllers')).should.eventually.be.above(0);
         });
 	});
 	
 	describe(`getCount('test')`, () => {
         it('should return undefined when a random type is inputted', () => {
-            expect(handler.getCount('test')).to.be.undefined;
+            (handler.getCount('test')).should.eventually.be.undefined;
         });
     });
 
     describe('getAirportInfo()', () => {
         it('should get airport information for a given airport, EGLL', () => {
-            expect(handler.getAirportInfo('EGLL')).to.be.an('array').that.is.not.empty;
+            (handler.getAirportInfo('EGLL')).should.eventually.be.an('array').that.is.not.empty;
         });
 
         it('should return an empty array when no airport is given', () => {
-            expect(handler.getAirportInfo()).to.be.an('array').that.is.empty;
+            (handler.getAirportInfo()).should.eventually.be.an('array').that.is.empty;
 		});
 		
 		it('should not include users with the frequency of 199.998', () =>{
-			expect(handler.getAirportInfo('EGLL')).to.be.an('array').that.does.not.include(obj);
+			(handler.getAirportInfo('EGLL')).should.eventually.be.an('array').that.does.not.include(obj);
 		});
     });
 
     describe('getPopularAirports()', () => {
         it('should get a list of the 10 most popular airports', () => {
-            expect(handler.getPopularAirports()).to.be.an('array').to.have.lengthOf(10);
+            (handler.getPopularAirports()).should.eventually.be.an('array').to.have.lengthOf(10);
         });
 	});
 	
 	describe('getClientDetails(cid)', () => {
 		it('should return undefined for a non connected CID', () => {
-			expect(handler.getClientDetails(999999)).to.be.undefined;
+			(handler.getClientDetails(999999)).should.eventually.be.undefined;
 		});
 	});
 
 	describe('getSupervisors()', () => {
 		it('should return a list of supervisors connected to the VATSIM network, including a test supervisor', () => {
-			expect(handler.getSupervisors()).to.be.an('array').that.is.not.empty;
+			(handler.getSupervisors()).should.eventually.be.an('array').that.is.not.empty;
 		});
 	});
 

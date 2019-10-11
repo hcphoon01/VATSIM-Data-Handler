@@ -1,5 +1,9 @@
 const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 chai.use(require('chai-json'));
+chai.use(chaiAsPromised);
+chai.should();
+
 const DataHandler = require('../handler');
 const expect = require('chai').expect;
 const path = require('path');
@@ -9,9 +13,21 @@ const handler = new DataHandler();
 const json = path.basename('../vatsimData.json');
 
 describe('#json handling', () => {
+	var check = function(done){
+		if (fs.existsSync(json)) done();
+		else (setTimeout( () => {
+			check(done);
+		}, 100));
+	};
+
+	before((done) => {
+		check(done);
+	});
+	
     it('should create vatsimData.json', async () => {
-        await handler.update();
-        expect(json).to.be.a.jsonFile();
+        handler.update().then(() => {
+			expect(json).to.be.a.jsonFile();
+		});
 	});
 	
     it('should store the last update date in the json file', () => {
@@ -27,6 +43,6 @@ describe('#json handling', () => {
 	});
 	
 	it('should check to see if the json file needs updating', () => {
-		expect(handler.shouldUpdate()).to.equal(false);
+		expect(handler.shouldUpdate()).to.eventually.equal(false);
 	});
 });

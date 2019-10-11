@@ -29,7 +29,7 @@ A data handler for the VATSIM status system coded in JavaScript
   const DataHandler = require('vatsim-data-handler');
   const handler = new DataHandler();
 
-  console.log(handler.getCount('all'));
+  handler.getSupervisors().then(val => console.log(val));
   ```
   This would log the number of clients connected to the VATSIM network
 
@@ -41,7 +41,7 @@ A data handler for the VATSIM status system coded in JavaScript
 * `getClientDetails(cid)` - Returns the details of a specific pilots flight, where cid is a valid VATSIM cid as an integer
 * `getSupervisors()` - Returns a list of all the supervisors/admins connected to VATSIM
 
-Deprecated
+### Deprecated - from v2.0.0 + 
 ------
 * `getClientCount()` - Returns the number of clients connected to the VATSIM network (Replaced by `getCount(type)`)
 * `getPilotCount()` - Returns the number of pilots connected to the VATSIM network (Replaced by `getCount(type)`)
