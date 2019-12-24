@@ -73,19 +73,27 @@ class DataHandler {
 
 	async getAirportInfo(airport = null) {
 		const parsed = await this.loadFile();
-		let airportInfo = [];
+		let airportInfoPilots = [];
+		let airportInfoControllers = [];
 
 		parsed.pilots.forEach(pilot => {
 			if (pilot.plan.departure === airport || pilot.plan.arrival === airport) {
-				airportInfo.push(pilot);
+				airportInfoPilots.push(pilot);
 			}
 		});
 
 		parsed.controllers.forEach(controller => {
 			if (controller.callsign.includes(airport) && controller.frequency !== 99998) {
-				airportInfo.push(controller);
+				airportInfoControllers.push(controller);
+			}
+			else if (controller.callsign.includes(airport.substr(1)) && controller.frequency !== 99998) {
+				airportInfoControllers.push(controller);
 			}
 		});
+		let airportInfo = {};
+		airportInfo['pilots'] = airportInfoPilots;
+		airportInfo['controllers'] = airportInfoControllers;
+
 		return airportInfo;
 	}
 
