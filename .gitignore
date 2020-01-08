@@ -62,4 +62,5 @@ typings/
 
 # miscellaneous items
 vatsimData.json
+oldData.json
 test.js
