@@ -8,7 +8,7 @@ class DataHandler extends EventEmitter {
 		this.shouldUpdate();
 	}
 
-	updateTimer = setInterval(this.shouldUpdate, 2000);
+	updateTimer = setInterval(this.shouldUpdate, 120000);
 
 	async shouldUpdate() {
 		if (!fs.existsSync('vatsimData.json')) await this.initialUpdate();
@@ -21,7 +21,6 @@ class DataHandler extends EventEmitter {
 		const minutes = Math.floor(dateDifference / 60000);
 
 		if (minutes >= 2) await this.update();
-		console.log('updated')
 
 		return false;
 	}
