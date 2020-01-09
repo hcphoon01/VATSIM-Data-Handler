@@ -5,10 +5,10 @@ const EventEmitter = require('events');
 class DataHandler extends EventEmitter {
 	constructor() {
 		super();
-		this.shouldUpdate();
+		this.shouldUpdate.bind(this);
 	}
 
-	updateTimer = setInterval(this.update.bind(this), 2000);
+	updateTimer = setInterval(this.update.bind(this), 120000);
 
 	async shouldUpdate() {
 		if (!fs.existsSync('vatsimData.json')) await this.initialUpdate();
