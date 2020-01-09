@@ -8,7 +8,7 @@ class DataHandler extends EventEmitter {
 		this.shouldUpdate();
 	}
 
-	updateTimer = setInterval(this.shouldUpdate, 120000);
+	updateTimer = setInterval(this.update.bind(this), 2000);
 
 	async shouldUpdate() {
 		if (!fs.existsSync('vatsimData.json')) await this.initialUpdate();
@@ -52,9 +52,7 @@ class DataHandler extends EventEmitter {
 		}
 		if (result.created) {
 			this.emit('newController', result.created)
-			console.log('emitted')
 		}
-
 	}
 
 	async initialUpdate() {
