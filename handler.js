@@ -27,7 +27,7 @@ class DataHandler extends EventEmitter {
 
 	async update() {
 		fs.copyFile('vatsimData.json', 'oldData.json', (err) => {
-			if (err) throw err;
+			if (err) console.log(err);
 		});
 		let body = await this.downloadFile();
 		const parsedJSON = JSON.parse(body);
@@ -208,7 +208,7 @@ var compareJson = function() {
 		VALUE_UNCHANGED: 'unchanged',
 		map: function(obj1, obj2) {
 		  if (this.isFunction(obj1) || this.isFunction(obj2)) {
-			throw 'Invalid argument. Function given, object expected.';
+			console.log('Invalid argument. Function given, object expected.');
 		  }
 		  if (this.isValue(obj1) || this.isValue(obj2)) {
 			return {
