@@ -120,9 +120,9 @@ class DataHandler extends EventEmitter {
 			if (controller.callsign.includes(airport) && controller.frequency !== 99998) {
 				airportInfoControllers.push(controller);
 			}
-			else if (controller.callsign.includes(airport.substr(1)) && controller.frequency !== 99998) {
-				airportInfoControllers.push(controller);
-			}
+			// else if (controller.callsign.includes(airport.substr(1)) && controller.frequency !== 99998) {
+			// 	airportInfoControllers.push(controller);
+			// }
 		});
 		let airportInfo = {};
 		airportInfo['pilots'] = airportInfoPilots;
