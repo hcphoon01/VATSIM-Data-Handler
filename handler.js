@@ -174,6 +174,18 @@ class DataHandler extends EventEmitter {
 		return(airportList.slice(0,10));
 	}
 
+	async getFlightInfo(callsign) {
+		const parsed = await this.loadFile();
+		let pilotDetails = [];
+
+		parsed.pilots.forEach(pilot => {
+			if (pilot.callsign == callsign) {
+				pilotDetails.push(pilot);
+			}
+		})
+		return pilotDetails[0];
+	}
+
 	async getClientDetails(cid) {
 		const parsed = await this.loadFile();
 		let pilotDetails = [];

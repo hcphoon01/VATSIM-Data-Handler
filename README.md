@@ -38,6 +38,7 @@ A data handler for the VATSIM status system coded in JavaScript
 * `getCount(type)` - Returns the number of connected clients, where type is the type of requested client. Available arguments are 'all', 'pilots' and 'controllers'
 * `getAirportInfo(airport)` - Returns the details of pilots into or out of a certain airport along with the controllers controlling that airport, the airport argument is a 4 letter ICAO code
 * `getPopularAirports()` - Returns a list of the top 10 airports for arriving and departing aircraft
+* `getFlightInfo(callsign)` - Returns the details of a specific pilots flight, where callsign is a valid VATSIM callsign as a string
 * `getClientDetails(cid)` - Returns the details of a specific pilots flight, where cid is a valid VATSIM cid as an integer
 * `getSupervisors()` - Returns a list of all the supervisors/admins connected to VATSIM
 
