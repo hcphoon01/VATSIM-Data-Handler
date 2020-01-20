@@ -210,6 +210,19 @@ class DataHandler extends EventEmitter {
 
 		return supervisorList;
 	}
+
+	async getControllers() {
+		const parsed = await this.loadFile();
+		let controllerList = [];
+
+		parsed.controllers.map(controller => {
+			if (controller.frequency != 99998){
+				controllerList.push(controller);
+			}
+		});
+		
+		return controllerList;
+	}
 }
 
 var compareJson = function() {

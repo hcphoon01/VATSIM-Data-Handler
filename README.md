@@ -40,6 +40,7 @@ A data handler for the VATSIM status system coded in JavaScript
 * `getPopularAirports()` - Returns a list of the top 10 airports for arriving and departing aircraft
 * `getFlightInfo(callsign)` - Returns the details of a specific pilots flight, where callsign is a valid VATSIM callsign as a string
 * `getClientDetails(cid)` - Returns the details of a specific pilots flight, where cid is a valid VATSIM cid as an integer
+* `getControllers()` - Returns a list of all the controllers connected to VATSIM
 * `getSupervisors()` - Returns a list of all the supervisors/admins connected to VATSIM
 
 ## Available events
