@@ -25,7 +25,7 @@ describe('#json handling', () => {
 	});
 	
     it('should create vatsimData.json', async () => {
-        handler.update().then(() => {
+        handler.initialUpdate().then(() => {
 			expect(json).to.be.a.jsonFile();
 		});
 	});
