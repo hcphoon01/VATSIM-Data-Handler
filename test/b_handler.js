@@ -10,12 +10,12 @@ const handler = new DataHandler();
 
 const jsonFile = path.basename('../vatsimData.json');
 
-const obj = {
+const controller = {
 	"server": "UK-1",
 	"callsign": "EGLL_SUP",
 	"member": {
-	"cid": 9999999,
-	"name": "Test User"
+		"cid": 9999999,
+		"name": "Test User"
 	},
 	"rating": 11,
 	"frequency": 99998,
@@ -23,6 +23,38 @@ const obj = {
 	"range": 300,
 	"latitude": -4.67434,
 	"longitude": 55.52184
+};
+
+const pilot = {
+	"server": "UK-1",
+	"callsign": "A320",
+	"member": {
+		"cid": 1234567,
+		"name": "TEST USER"
+	},
+	"latitude": -4.67434,
+	"longitude": 55.52184,
+	"altitude": 100,
+	"speed": 0,
+	"heading": 107,
+	"plan": {
+		"flight_rules": "I",
+		"aircraft": "A320",
+		"cruise_speed": "480",
+		"departure": "EGLL",
+		"arrival": "EGLL",
+		"altitude": "6000",
+		"alternate": "EGLL",
+	"route": "DCT",
+	"time": {
+		"departure": "1030",
+		"hours_enroute": "1",
+		"minutes_enroute": "00",
+		"hours_fuel": "4",
+		"minutes_fuel": "00"
+	},
+	"remarks": " /v/"
+	},
 };
 
 describe('#Data Handling', () => {
@@ -40,8 +72,11 @@ describe('#Data Handling', () => {
 		const file = fs.readFileSync(jsonFile);
 		const parsed = JSON.parse(file);
 		
-		parsed.controllers.push(obj);
+		parsed.controllers.push(controller);
+		parsed.pilots.push(pilot);
+
 		const json = JSON.stringify(parsed);
+
 		fs.writeFileSync('vatsimData.json', json);
 	});
 
@@ -107,11 +142,18 @@ describe('#Data Handling', () => {
 		});
 	});
 
+	describe('getControllers()', () => {
+		it('should return a list of all controllers connected to the VATSIM network', () => {
+			(handler.getControllers()).should.eventually.be.an('array').that.is.not.empty;
+		});
+	});
+
 	after(() => {
 		const file = fs.readFileSync(jsonFile);
 		const parsed = JSON.parse(file);
 
 		parsed.controllers.splice(-1,1);
+		parsed.pilots.splice(-1, 1);
 
 		const json = JSON.stringify(parsed);
 		fs.writeFileSync('vatsimData.json', json);
