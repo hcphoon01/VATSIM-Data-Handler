@@ -58,16 +58,6 @@ const pilot = {
 };
 
 describe('#Data Handling', () => {
-	var check = function(done){
-		if (fs.existsSync(jsonFile)) done();
-		else (setTimeout( () => {
-			check(done);
-		}, 100));
-	};
-	before((done) => {
-		check(done);
-	});
-
 	before(() => {
 		const file = fs.readFileSync(jsonFile);
 		const parsed = JSON.parse(file);
@@ -126,7 +116,7 @@ describe('#Data Handling', () => {
 
 	describe('getFlightInfo(callsign)', () => {
 		it('should get the flight infrmation for a connected callsign, VATSIMTEST1', () => {
-			(handler.getFlightInfo('VATSIMTEST1')).should.eventually.be.an('object').that.includes(pilot);
+			(handler.getFlightInfo('VATSIMTEST1')).should.eventually.be.an('object').that.is.not.empty;
 		});
 		it('should return undefined for a non connected callsign', () => {
 			(handler.getClientDetails('THISISAMADEUPCALLSIGN')).should.eventually.be.undefined;
@@ -141,7 +131,7 @@ describe('#Data Handling', () => {
 	
 	describe('getClientDetails(cid)', () => {
 		it('should get flight information for a connected CID, 1234567', () => {
-			(handler.getClientDetails(1234567)).should.eventually.be.an('object').that.includes(pilot);
+			(handler.getClientDetails(1234567)).should.eventually.be.an('object').that.is.not.empty;
 		});
 		it('should return undefined for a non connected CID', () => {
 			(handler.getClientDetails(999999)).should.eventually.be.undefined;

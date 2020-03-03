@@ -17,10 +17,12 @@ describe('#json handling', () => {
 
 	before(() => {
 		return new Promise(async (resolve) => {
-			if (fs.statSync(json)) { resolve(); }
-			else {
+			try {
+				fs.statSync(json);
+				resolve();
+			} catch(err) {
 				await fileHandler.initialUpdate();
-				if (fs.statSync(json)) resolve();
+				resolve();
 			}
 		});
 	});
