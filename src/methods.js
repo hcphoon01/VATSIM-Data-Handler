@@ -12,7 +12,7 @@ class DataHandler {
      * 
      * @param {String} type Type of client to return (all, pilots or controllers).
      * 
-     * @returns {Number} Returns the number of clients based on the type.
+     * @returns {Number} The number of clients based on the type.
      */
 
     async getCount(type) {
@@ -34,7 +34,7 @@ class DataHandler {
      * 
      * @param {String} airport Airport ICAO code to get information for.
      * 
-     * @returns {Array} All clients relating to a given airport ICAO.
+     * @returns {Array} An array containing all clients relating to a given airport ICAO.
      */
 	async getAirportInfo(airport = null) {
 		const parsed = await this.fileHandler.loadFile();
@@ -65,7 +65,7 @@ class DataHandler {
     /**
      * Get the most popular airports based on client count
      * 
-     * @returns {Array} The top 10 most popular airports.
+     * @returns {Array} An array containing the top 10 most popular airports.
      */
 
 	async getPopularAirports() {
@@ -116,7 +116,7 @@ class DataHandler {
      * 
      * @param {String} callsign The callsign to get the flight information for.
      * 
-     * @returns {Object} Containing flight information.
+     * @returns {Object} An object containing flight information.
      */
 
 	async getFlightInfo(callsign) {
@@ -134,7 +134,7 @@ class DataHandler {
     /**
      * Get all connected pilots.
      * 
-     * @returns {Array} Containing all connected pilots.
+     * @returns {Array} An array containing all connected pilots.
      */
 
 	async getClients() {
@@ -147,7 +147,7 @@ class DataHandler {
      * 
      * @param {Number} cid The VATSIM CID of the connected pilot.
      * 
-     * @returns {Object} Containing flight information.
+     * @returns {Object} An object containing flight information.
      */
 
 	async getClientDetails(cid) {
@@ -165,7 +165,7 @@ class DataHandler {
     /**
      * Get all the connected supervisors.
      * 
-     * @returns {Array} Containing all connected supervisors.
+     * @returns {Array} An array containing all connected supervisors.
      */
 
 	async getSupervisors() {
@@ -184,9 +184,9 @@ class DataHandler {
     /**
      * Get all the connected controllers.
      * 
-     * @returns {Array} Containing all connected controllers.
+     * @returns {Array} An array containing all connected controllers.
      */
-    
+
 	async getControllers() {
 		const parsed = await this.fileHandler.loadFile();
 		let controllerList = [];
