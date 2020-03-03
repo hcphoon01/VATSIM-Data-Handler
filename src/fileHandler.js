@@ -2,7 +2,7 @@ const fs = require('fs');
 const request = require('request');
 const EventEmitter = require('events');
 
-class DataHandler extends EventEmitter {
+class FileHandler extends EventEmitter {
 	constructor() {
 		super();
 		this.shouldUpdate.bind(this);
@@ -40,18 +40,18 @@ class DataHandler extends EventEmitter {
 		const oldFile = fs.readFileSync('oldData.json');
 		const newFile = fs.readFileSync('vatsimData.json');
 		const oldParsed = JSON.parse(oldFile);
-		const newParsed = JSON.parse(newFile)
+		const newParsed = JSON.parse(newFile);
 		const diff = compareJson.map(oldParsed, newParsed);
-		const result = {}
+		const result = {};
 		for (const {type, data} of Object.values(diff.controllers)) {
 			if (result[type]) {
-				result[type].push(data)
+				result[type].push(data);
 			 } else {
-				result[type] = [data]
+				result[type] = [data];
 			 }
 		}
 		if (result.created) {
-			this.emit('newController', result.created)
+			this.emit('newController', result.created);
 		}
 	}
 
@@ -89,144 +89,6 @@ class DataHandler extends EventEmitter {
 	async loadFile(){
 		await this.shouldUpdate();
 		return(JSON.parse(fs.readFileSync('vatsimData.json', {encoding:'utf-8'})));
-	}
-
-	async getCount(type) {
-		const parsed = await this.loadFile();
-		switch (type){
-			case 'all':
-				return (parsed.pilots.length + parsed.controllers.length);
-			case 'pilots':
-				return (parsed.pilots.length);
-			case 'controllers':
-				return (parsed.controllers.length);
-			default:
-				return undefined;
-		}
-	}
-
-	async getAirportInfo(airport = null) {
-		const parsed = await this.loadFile();
-		let airportInfoPilots = [];
-		let airportInfoControllers = [];
-
-		parsed.pilots.forEach(pilot => {
-			if (pilot.plan.departure === airport || pilot.plan.arrival === airport) {
-				airportInfoPilots.push(pilot);
-			}
-		});
-
-		parsed.controllers.forEach(controller => {
-			if (controller.callsign.includes(airport) && controller.frequency !== 99998) {
-				airportInfoControllers.push(controller);
-			}
-			else if (controller.callsign.includes(airport.substr(1) + '_') && controller.frequency !== 99998 ** airport.startsWith('K')) {
-				airportInfoControllers.push(controller);
-			}
-		});
-		let airportInfo = {};
-		airportInfo['pilots'] = airportInfoPilots;
-		airportInfo['controllers'] = airportInfoControllers;
-
-		return airportInfo;
-	}
-
-	async getPopularAirports() {
-		const parsed = await this.loadFile();
-		let airportList = [];
-		let newAirport;
-
-		parsed.pilots.forEach(pilot => {
-			if (pilot.plan.departure !== '') {
-				newAirport = true;
-				airportList.forEach(airport => {
-					if (airport.id === pilot.plan.departure) {
-						airport.count++;
-						newAirport = false;
-					}
-				});
-				if (newAirport) {
-					airportList.push({
-						id: pilot.plan.departure,
-						count: 1
-					});
-				}
-			}
-			if (pilot.plan.arrival !== '') {
-				newAirport = true;
-				airportList.forEach(airport => {
-					if (airport.id === pilot.plan.arrival) {
-						airport.count++;
-						newAirport = false;
-					}
-				});
-				if (newAirport) {
-					airportList.push({
-						id: pilot.plan.arrival,
-						count: 1
-					});
-				}
-			}
-		});
-
-		airportList.sort((a, b) => b.count - a.count);
-
-		return(airportList.slice(0,10));
-	}
-
-	async getFlightInfo(callsign) {
-		const parsed = await this.loadFile();
-		let pilotDetails = [];
-
-		parsed.pilots.forEach(pilot => {
-			if (pilot.callsign == callsign) {
-				pilotDetails.push(pilot);
-			}
-		})
-		return pilotDetails[0];
-	}
-
-	async getClients() {
-		const parsed = await this.loadFile();
-		return parsed.pilots;
-	}
-
-	async getClientDetails(cid) {
-		const parsed = await this.loadFile();
-		let pilotDetails = [];
-
-		parsed.pilots.forEach(pilot => {
-			if (pilot.member.cid === cid){
-				pilotDetails.push(pilot);
-			}
-		});
-		return pilotDetails[0];
-	}
-
-	async getSupervisors() {
-		const parsed = await this.loadFile();
-		let supervisorList = [];
-
-		parsed.controllers.map(controller => {
-			if (controller.rating === 11 || controller.rating === 12){
-				supervisorList.push(controller);
-			}
-		});
-
-		return supervisorList;
-	}
-
-	async getControllers() {
-		const parsed = await this.loadFile();
-		let controllerList = [];
-
-		parsed.controllers.map(controller => {
-			if (controller.frequency != 99998){
-				controllerList.push(controller);
-			}
-		});
-		
-		return controllerList;
 	}
 }
 
@@ -301,7 +163,7 @@ var compareJson = function() {
 		isValue: function (x) {
 		  return !this.isObject(x) && !this.isArray(x);
 		}
-	  }
+	  };
 }();
 
-module.exports = DataHandler;
+module.exports = FileHandler;
