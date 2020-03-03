@@ -27,7 +27,7 @@ const controller = {
 
 const pilot = {
 	"server": "UK-1",
-	"callsign": "A320",
+	"callsign": "VATSIMTEST1",
 	"member": {
 		"cid": 1234567,
 		"name": "TEST USER"
@@ -114,7 +114,7 @@ describe('#Data Handling', () => {
 		});
 		
 		it('should not include users with the frequency of 199.998', () =>{
-			(handler.getAirportInfo('EGLL')).should.eventually.be.an('object').that.does.not.include(obj);
+			(handler.getAirportInfo('EGLL')).should.eventually.be.an('object').that.does.not.include(controller);
 		});
     });
 
@@ -124,6 +124,15 @@ describe('#Data Handling', () => {
         });
 	});
 
+	describe('getFlightInfo(callsign)', () => {
+		it('should get the flight infrmation for a connected callsign, VATSIMTEST1', () => {
+			(handler.getFlightInfo('VATSIMTEST1')).should.eventually.be.an('object').that.includes(pilot);
+		});
+		it('should return undefined for a non connected callsign', () => {
+			(handler.getClientDetails('THISISAMADEUPCALLSIGN')).should.eventually.be.undefined;
+		});
+	});
+
 	describe('getClients()', () => {
 		it('should return a list of all clients', () => {
 			(handler.getClients()).should.eventually.be.an('array').that.is.not.empty;
@@ -131,6 +140,9 @@ describe('#Data Handling', () => {
 	});
 	
 	describe('getClientDetails(cid)', () => {
+		it('should get flight information for a connected CID, 1234567', () => {
+			(handler.getClientDetails(1234567)).should.eventually.be.an('object').that.includes(pilot);
+		});
 		it('should return undefined for a non connected CID', () => {
 			(handler.getClientDetails(999999)).should.eventually.be.undefined;
 		});
