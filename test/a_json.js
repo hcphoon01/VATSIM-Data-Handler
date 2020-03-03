@@ -10,7 +10,6 @@ const expect = require('chai').expect;
 const path = require('path');
 const fs = require('fs');
 
-const handler = new DataHandler();
 const fileHandler = new FileHandler();
 const json = path.basename('../vatsimData.json');
 
@@ -19,10 +18,11 @@ describe('#json handling', () => {
 		if (fs.existsSync(json)) done();
 		else (setTimeout( () => {
 			check(done);
-		}, 100));
+		}, 1000));
 	};
 
 	before((done) => {
+		fileHandler.shouldUpdate();
 		check(done);
 	});
 	
