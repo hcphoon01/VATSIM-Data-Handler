@@ -14,20 +14,16 @@ const fileHandler = new FileHandler();
 const json = path.basename('../vatsimData.json');
 
 describe('#json handling', () => {
-	var check = function(done){
-		if (fs.existsSync(json)) done();
-		else (setTimeout( () => {
-			check(done);
-		}, 1000));
-	};
 
-	before((done) => {
-		fileHandler.shouldUpdate();
-		check(done);
+	before(() => {
+		return new Promise(async (resolve) => {
+			await fileHandler.initialUpdate();
+			if (fs.statSync(json)) resolve();
+		});
 	});
 	
     it('should create vatsimData.json', async () => {
-        fileHandler.initialUpdate().then(() => {
+        fileHandler.shouldUpdate().then(() => {
 			expect(json).to.be.a.jsonFile();
 		});
 	});
