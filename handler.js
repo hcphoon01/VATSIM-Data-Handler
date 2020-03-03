@@ -186,6 +186,11 @@ class DataHandler extends EventEmitter {
 		return pilotDetails[0];
 	}
 
+	async getClients() {
+		const parsed = await this.loadFile();
+		return parsed.pilots;
+	}
+
 	async getClientDetails(cid) {
 		const parsed = await this.loadFile();
 		let pilotDetails = [];

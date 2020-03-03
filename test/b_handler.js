@@ -88,6 +88,12 @@ describe('#Data Handling', () => {
             (handler.getPopularAirports()).should.eventually.be.an('array').to.have.lengthOf(10);
         });
 	});
+
+	describe('getClients()', () => {
+		it('should return a list of all clients', () => {
+			(handler.getClients()).should.eventually.be.above(50);
+		});
+	});
 	
 	describe('getClientDetails(cid)', () => {
 		it('should return undefined for a non connected CID', () => {
