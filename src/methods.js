@@ -36,8 +36,11 @@ class DataHandler {
      * 
      * @returns {Array} An array containing all clients relating to a given airport ICAO.
      */
-	async getAirportInfo(airport = null) {
-		const parsed = await this.fileHandler.loadFile();
+	async getAirportInfo(airport) {
+        if (!airport) {
+            return undefined;
+        } else {
+            const parsed = await this.fileHandler.loadFile();
 		let airportInfoPilots = [];
 		let airportInfoControllers = [];
 
@@ -60,6 +63,7 @@ class DataHandler {
 		airportInfo['controllers'] = airportInfoControllers;
 
 		return airportInfo;
+        }
 	}
 
     /**

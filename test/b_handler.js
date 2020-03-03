@@ -1,4 +1,4 @@
-const DataHandler = require('../handler');
+const DataHandler = require('../src/methods');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -71,15 +71,15 @@ describe('#Data Handling', () => {
 
     describe('getAirportInfo()', () => {
         it('should get airport information for a given airport, EGLL', () => {
-            (handler.getAirportInfo('EGLL')).should.eventually.be.an('array').that.is.not.empty;
+            (handler.getAirportInfo('EGLL')).should.eventually.be.an('object').that.is.not.empty;
         });
 
         it('should return an empty array when no airport is given', () => {
-            (handler.getAirportInfo()).should.eventually.be.an('array').that.is.empty;
+            (handler.getAirportInfo()).should.eventually.be.undefined;
 		});
 		
 		it('should not include users with the frequency of 199.998', () =>{
-			(handler.getAirportInfo('EGLL')).should.eventually.be.an('array').that.does.not.include(obj);
+			(handler.getAirportInfo('EGLL')).should.eventually.be.an('object').that.does.not.include(obj);
 		});
     });
 
@@ -91,7 +91,7 @@ describe('#Data Handling', () => {
 
 	describe('getClients()', () => {
 		it('should return a list of all clients', () => {
-			(handler.getClients()).should.eventually.be.above(50);
+			(handler.getClients()).should.eventually.be.an('array').that.is.not.empty;
 		});
 	});
 	
