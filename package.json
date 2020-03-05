@@ -1,6 +1,6 @@
 {
   "name": "vatsim-data-handler",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "A data handler for the VATSIM status system",
   "main": "src/methods.js",
   "scripts": {
