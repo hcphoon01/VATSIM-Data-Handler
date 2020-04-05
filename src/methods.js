@@ -93,38 +93,41 @@ class DataHandler {
 		let airportList = [];
 		let newAirport;
 
-		parsed.pilots.forEach(pilot => {
-			if (pilot.plan.departure !== '') {
-				newAirport = true;
-				airportList.forEach(airport => {
-					if (airport.id === pilot.plan.departure) {
-						airport.count++;
-						newAirport = false;
-					}
-				});
-				if (newAirport) {
-					airportList.push({
-						id: pilot.plan.departure,
-						count: 1
+		for (let i = 0; i < parsed.clients.length; i++) {
+			const pilot = parsed.clients[i];
+			if(pilot.clienttype == 'PILOT'){
+				if (pilot.planned_depairport !== null) {
+					newAirport = true;
+					airportList.forEach(airport => {
+						if (airport.id === pilot.planned_depairport) {
+							airport.count++;
+							newAirport = false;
+						}
 					});
+					if (newAirport) {
+						airportList.push({
+							id: pilot.planned_depairport,
+							count: 1
+						});
+					}
+				}
+				if (pilot.planned_destairport !== null) {
+					newAirport = true;
+					airportList.forEach(airport => {
+						if (airport.id === pilot.planned_destairport) {
+							airport.count++;
+							newAirport = false;
+						}
+					});
+					if (newAirport) {
+						airportList.push({
+							id: pilot.planned_destairport,
+							count: 1
+						});
+					}
 				}
 			}
-			if (pilot.plan.arrival !== '') {
-				newAirport = true;
-				airportList.forEach(airport => {
-					if (airport.id === pilot.plan.arrival) {
-						airport.count++;
-						newAirport = false;
-					}
-				});
-				if (newAirport) {
-					airportList.push({
-						id: pilot.plan.arrival,
-						count: 1
-					});
-				}
-			}
-		});
+		}
 
 		airportList.sort((a, b) => b.count - a.count);
 
@@ -143,11 +146,14 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		let pilotDetails = [];
 
-		parsed.pilots.forEach(pilot => {
-			if (pilot.callsign == callsign) {
-				pilotDetails.push(pilot);
+		for (let i = 0; i < parsed.clients.length; i++) {
+			const pilot = parsed.clients[i];
+			if(pilot.clienttype == 'PILOT'){
+				if (pilot.callsign == callsign) {
+					pilotDetails.push(pilot);
+				}
 			}
-		});
+		}
 		return pilotDetails[0];
     }
     
