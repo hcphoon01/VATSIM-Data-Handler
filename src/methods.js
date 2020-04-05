@@ -19,11 +19,25 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		switch (type){
 			case 'all':
-				return (parsed.pilots.length + parsed.controllers.length);
+				return (parsed.clients);
 			case 'pilots':
-				return (parsed.pilots.length);
+				let pilots = [];
+				for (let i = 0; i < parsed.clients.length; i++) {
+					const client = parsed.clients[i];
+					if(client.clienttype == 'PILOT') {
+						pilots.push(client);
+					}
+				}
+				return pilots;
 			case 'controllers':
-				return (parsed.controllers.length);
+				let controllers = [];
+				for (let i = 0; i < parsed.clients.length; i++) {
+					const client = parsed.clients[i];
+					if(client.clienttype == 'ATC') {
+						controllers.push(client);
+					}
+				}
+				return controllers;
 			default:
 				return undefined;
 		}
@@ -44,20 +58,22 @@ class DataHandler {
 		let airportInfoPilots = [];
 		let airportInfoControllers = [];
 
-		parsed.pilots.forEach(pilot => {
-			if (pilot.plan.departure === airport || pilot.plan.arrival === airport) {
-				airportInfoPilots.push(pilot);
+		for (let i = 0; i < parsed.clients.length; i++) {
+			const client = parsed.clients[i];
+			if(client.clienttype == 'PILOT'){
+				if (client.planned_depairport === airport || client.planned_destairport === airport) {
+					airportInfoPilots.push(client);
+				}
+			} else if(client.clienttype == 'ATC'){
+				if (client.callsign.includes(airport) && client.frequency !== 99998) {
+					airportInfoControllers.push(client);
+				}
+				else if (client.callsign.includes(airport.substr(1) + '_') && controller.frequency !== 99998 ** airport.startsWith('K')) {
+					airportInfoControllers.push(client);
+				}
 			}
-		});
+		}
 
-		parsed.controllers.forEach(controller => {
-			if (controller.callsign.includes(airport) && controller.frequency !== 99998) {
-				airportInfoControllers.push(controller);
-			}
-			else if (controller.callsign.includes(airport.substr(1) + '_') && controller.frequency !== 99998 ** airport.startsWith('K')) {
-				airportInfoControllers.push(controller);
-			}
-		});
 		let airportInfo = {};
 		airportInfo['pilots'] = airportInfoPilots;
 		airportInfo['controllers'] = airportInfoControllers;
