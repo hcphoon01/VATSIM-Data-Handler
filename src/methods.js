@@ -1,10 +1,9 @@
-const EventEmitter = require('events');
-
-const fileHandler = require('./fileHandler');
+const Handler = require('./fileHandler');
+const fileHandler = new Handler();
 
 class DataHandler {
     constructor() {
-        this.fileHandler = new fileHandler();
+		this.fileHandler = fileHandler;
     }
 
     /**
@@ -146,14 +145,15 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		let pilotDetails = [];
 
-		for (let i = 0; i < parsed.clients.length; i++) {
-			const pilot = parsed.clients[i];
-			if(pilot.clienttype == 'PILOT'){
-				if (pilot.callsign == callsign) {
-					pilotDetails.push(pilot);
-				}
+		const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+
+		for (let i = 0; i < pilots.length; i++) {
+			const pilot = pilots[i];
+			if (pilot.callsign == callsign) {
+				pilotDetails.push(pilot);
 			}
 		}
+
 		return pilotDetails[0];
     }
     
@@ -165,7 +165,7 @@ class DataHandler {
 
 	async getClients() {
 		const parsed = await this.fileHandler.loadFile();
-		return parsed.pilots;
+		return parsed.clients.filter(obj => obj.clienttype == 'PILOT');
     }
     
     /**
@@ -180,8 +180,10 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		let pilotDetails = [];
 
-		parsed.pilots.forEach(pilot => {
-			if (pilot.member.cid === cid){
+		const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+
+		pilots.forEach(pilot => {
+			if (pilot.cid === cid){
 				pilotDetails.push(pilot);
 			}
 		});
@@ -198,7 +200,9 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		let supervisorList = [];
 
-		parsed.controllers.map(controller => {
+		const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+
+		controllers.map(controller => {
 			if (controller.rating === 11 || controller.rating === 12){
 				supervisorList.push(controller);
 			}
@@ -217,7 +221,9 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		let controllerList = [];
 
-		parsed.controllers.map(controller => {
+		const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+
+		controllers.map(controller => {
 			if (controller.frequency != 99998){
 				controllerList.push(controller);
 			}
