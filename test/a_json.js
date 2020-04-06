@@ -39,10 +39,10 @@ describe('#json handling', () => {
         expect(new Date(parsed.updated_date)).to.be.below(new Date());
 	});
 	
-    it('should contain the connected pilots and controllers', () => {
+    it('should contain the clients, prefiles and servers', () => {
         const file = fs.readFileSync(json);
         const parsed = JSON.parse(file);
-        expect(parsed).to.include.all.keys('pilots', 'controllers');
+        expect(parsed).to.include.all.keys('clients', 'prefiles', 'servers');
 	});
 	
 	it('should check to see if the json file needs updating', () => {

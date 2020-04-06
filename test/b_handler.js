@@ -11,50 +11,91 @@ const handler = new DataHandler();
 const jsonFile = path.basename('../vatsimData.json');
 
 const controller = {
-	"server": "UK-1",
 	"callsign": "EGLL_SUP",
-	"member": {
-		"cid": 9999999,
-		"name": "Test User"
-	},
-	"rating": 11,
+	"cid": "9999999",
+	"realname": "Test User",
+	"clienttype": "ATC",
 	"frequency": 99998,
-	"facility": 0,
-	"range": 300,
 	"latitude": -4.67434,
-	"longitude": 55.52184
+	"longitude": 55.52184,
+	"altitude": 0,
+	"groundspeed": 0,
+	"planned_aircraft": null,
+	"planned_tascruise": null,
+	"planned_depairport": null,
+	"planned_altitude": null,
+	"planned_destairport": null,
+	"server": "UK-1",
+	"protrevision": 100,
+	"rating": 11,
+	"transponder": 0,
+	"facilitytype": 0,
+	"visualrange": 300,
+	"planned_revision": null,
+	"planned_flighttype": null,
+	"planned_deptime": null,
+	"planned_actdeptime": null,
+	"planned_hrsenroute": null,
+	"planned_minenroute": null,
+	"planned_hrsfuel": null,
+	"planned_minfuel": null,
+	"planned_altairport": null,
+	"planned_remarks": null,
+	"planned_route": null,
+	"planned_depairport_lat": 0,
+	"planned_depairport_lon": 0,
+	"planned_destairport_lat": 0,
+	"planned_destairport_lon": 0,
+	"atis_message": "Heathrow Supervisor",
+	"time_last_atis_received": "2020-04-06T00:54:36.0769604Z",
+	"time_logon": "2020-04-06T00:54:36.0769602Z",
+	"heading": 0,
+	"qnh_i_hg": 0,
+	"qnh_mb": 0
 };
 
 const pilot = {
-	"server": "UK-1",
-	"callsign": "VATSIMTEST1",
-	"member": {
-		"cid": 1234567,
-		"name": "TEST USER"
-	},
+    "callsign": "VATSIMTEST1",
+    "cid": "1234567",
+    "realname": "TEST USER",
+    "clienttype": "PILOT",
+    "frequency": null,
 	"latitude": -4.67434,
 	"longitude": 55.52184,
 	"altitude": 100,
-	"speed": 0,
-	"heading": 107,
-	"plan": {
-		"flight_rules": "I",
-		"aircraft": "A320",
-		"cruise_speed": "480",
-		"departure": "EGLL",
-		"arrival": "EGLL",
-		"altitude": "6000",
-		"alternate": "EGLL",
-	"route": "DCT",
-	"time": {
-		"departure": "1030",
-		"hours_enroute": "1",
-		"minutes_enroute": "00",
-		"hours_fuel": "4",
-		"minutes_fuel": "00"
-	},
-	"remarks": " /v/"
-	},
+	"groundspeed": 0,
+    "planned_aircraft": "A320/M",
+    "planned_tascruise": "480",
+    "planned_depairport": "EGLL",
+    "planned_altitude": "6000",
+    "planned_destairport": "EGLL",
+    "server": "UK-1",
+    "protrevision": 100,
+    "rating": 1,
+    "transponder": 1234,
+    "facilitytype": 0,
+    "visualrange": 0,
+    "planned_revision": "1",
+    "planned_flighttype": "I",
+    "planned_deptime": "1030",
+    "planned_actdeptime": "0",
+    "planned_hrsenroute": "1",
+    "planned_minenroute": "00",
+    "planned_hrsfuel": "4",
+    "planned_minfuel": "00",
+    "planned_altairport": "EGLL",
+    "planned_remarks": "/v/",
+    "planned_route": "DCT",
+    "planned_depairport_lat": 0,
+    "planned_depairport_lon": 0,
+    "planned_destairport_lat": 0,
+    "planned_destairport_lon": 0,
+    "atis_message": null,
+    "time_last_atis_received": "2020-04-05T14:00:38.8546725Z",
+    "time_logon": "2020-04-05T14:00:38.8546724Z",
+    "heading": 360,
+    "qnh_i_hg": 29.92,
+    "qnh_mb": 1013
 };
 
 describe('#Data Handling', () => {
@@ -62,8 +103,8 @@ describe('#Data Handling', () => {
 		const file = fs.readFileSync(jsonFile);
 		const parsed = JSON.parse(file);
 		
-		parsed.controllers.push(controller);
-		parsed.pilots.push(pilot);
+		parsed.clients.push(controller);
+		parsed.clients.push(pilot);
 
 		const json = JSON.stringify(parsed);
 
@@ -154,8 +195,8 @@ describe('#Data Handling', () => {
 		const file = fs.readFileSync(jsonFile);
 		const parsed = JSON.parse(file);
 
-		parsed.controllers.splice(-1,1);
-		parsed.pilots.splice(-1, 1);
+		parsed.clients.pop();
+		parsed.clients.pop();
 
 		const json = JSON.stringify(parsed);
 		fs.writeFileSync('vatsimData.json', json);
