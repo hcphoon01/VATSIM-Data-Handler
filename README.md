@@ -43,9 +43,9 @@ A data handler for the VATSIM status system coded in JavaScript
 * `getControllers()` - Returns a list of all the controllers connected to VATSIM
 * `getSupervisors()` - Returns a list of all the supervisors/admins connected to VATSIM
 
-## Available events
+## Available events - To be updated
 
-* `on('newController')` - Triggered when a new controller, or when new controllers, connect to the network
+* ~~`on('newController')` - Triggered when a new controller, or when new controllers, connect to the network~~
 
 ```javascript
 const DataHandler = require('vatsim-data-handler');
@@ -55,7 +55,7 @@ handler.on("newController", (data) => {
   console.log(data);
 })
 ```
-This would log any new controllers, including observers, that connect to the VATSIM network.
+~~This would log any new controllers, including observers, that connect to the VATSIM network.~~
 
 ### Deprecated - from v2.0.0 + 
 ------
