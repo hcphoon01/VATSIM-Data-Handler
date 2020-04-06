@@ -41,9 +41,9 @@ class FileHandler extends EventEmitter {
 		const newFile = fs.readFileSync('vatsimData.json');
 		const oldParsed = JSON.parse(oldFile);
 		const newParsed = JSON.parse(newFile);
-		const diff = compareJson.map(oldParsed, newParsed);
+		const diff = compareJson.map(oldParsed.clients, newParsed.clients);
 		const result = {};
-		for (const {type, data} of Object.values(diff.controllers)) {
+		for (const {type, data} of Object.values(diff)) {
 			if (result[type]) {
 				result[type].push(data);
 			 } else {
