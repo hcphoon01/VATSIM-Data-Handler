@@ -57,7 +57,7 @@ class DataHandler {
 				if (client.callsign.includes(airport) && client.frequency !== 99998) {
 					airportInfoControllers.push(client);
 				}
-				else if (client.callsign.includes(airport.substr(1) + '_') && controller.frequency !== 99998 ** airport.startsWith('K')) {
+				else if (client.callsign.includes(airport.substr(1) + '_') && client.frequency !== 99998 ** airport.startsWith('K')) {
 					airportInfoControllers.push(client);
 				}
 			}
@@ -173,7 +173,7 @@ class DataHandler {
 		const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
 
 		pilots.forEach(pilot => {
-			if (pilot.cid === cid){
+			if (pilot.cid == cid){
 				pilotDetails.push(pilot);
 			}
 		});
