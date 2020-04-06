@@ -18,25 +18,15 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		switch (type){
 			case 'all':
-				return (parsed.clients);
+				return (parsed.clients.length);
 			case 'pilots':
-				let pilots = [];
-				for (let i = 0; i < parsed.clients.length; i++) {
-					const client = parsed.clients[i];
-					if(client.clienttype == 'PILOT') {
-						pilots.push(client);
-					}
-				}
-				return pilots;
+				let pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+
+				return pilots.length;
 			case 'controllers':
-				let controllers = [];
-				for (let i = 0; i < parsed.clients.length; i++) {
-					const client = parsed.clients[i];
-					if(client.clienttype == 'ATC') {
-						controllers.push(client);
-					}
-				}
-				return controllers;
+				let controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+
+				return controllers.length;
 			default:
 				return undefined;
 		}
