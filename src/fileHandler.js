@@ -51,7 +51,22 @@ class FileHandler extends EventEmitter {
 			 }
 		}
 		if (result.created) {
-			this.emit('newController', result.created);
+			var newPilots = [];
+			var newControllers = [];
+			for (let i = 0; i < result.created.length; i++) {
+				const client = result.created[i];
+				if (client.clienttype == 'PILOT') {
+					newPilots.push(client);
+				} else if(client.clienttype == 'ATC') {
+					newControllers.push(client);
+				}
+			}
+			if (newControllers.length > 0){
+				process.emit('newController', newControllers);
+			}
+			if (newPilots.length > 0) {
+				process.emit('newPilot', newPilots);
+			}
 		}
 	}
 
