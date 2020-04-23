@@ -46,17 +46,18 @@ A data handler for the VATSIM status system coded in JavaScript
 
 ## Available events - To be updated
 
-* ~~`on('newController')` - Triggered when a new controller, or when new controllers, connect to the network~~
+* `on('newController')` - Triggered when a new controller, or when new controllers, connect to the network
+* `on('newPilot')` - Triggered when a new pilot, or when new pilots, connect to the network
 
 ```javascript
 const DataHandler = require('vatsim-data-handler');
 const handler = new DataHandler();
 
-handler.on("newController", (data) => {
+process.on("newController", (data) => {
   console.log(data);
 })
 ```
-~~This would log any new controllers, including observers, that connect to the VATSIM network.~~
+This would log any new controllers, including observers, that connect to the VATSIM network.
 
 ### Deprecated - from v2.0.0 + 
 ------
