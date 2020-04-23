@@ -54,10 +54,10 @@ class DataHandler {
 					airportInfoPilots.push(client);
 				}
 			} else if(client.clienttype == 'ATC'){
-				if (client.callsign.includes(airport) && client.frequency !== 99998) {
+				if (client.callsign.includes(airport) && client.frequency !== 199.998) {
 					airportInfoControllers.push(client);
 				}
-				else if (client.callsign.includes(airport.substr(1) + '_') && client.frequency !== 99998 ** airport.startsWith('K')) {
+				else if (client.callsign.includes(airport.substr(1) + '_') && client.frequency !== 199.998 ** airport.startsWith('K')) {
 					airportInfoControllers.push(client);
 				}
 			}
@@ -214,7 +214,7 @@ class DataHandler {
 		const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
 
 		controllers.map(controller => {
-			if (controller.frequency != 99998){
+			if (controller.frequency != 199.998){
 				controllerList.push(controller);
 			}
 		});

@@ -15,7 +15,7 @@ const controller = {
 	"cid": "9999999",
 	"realname": "Test User",
 	"clienttype": "ATC",
-	"frequency": 99998,
+	"frequency": 199.998,
 	"latitude": -4.67434,
 	"longitude": 55.52184,
 	"altitude": 0,
