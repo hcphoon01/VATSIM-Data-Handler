@@ -83,13 +83,7 @@ class FileHandler extends EventEmitter {
 
 	downloadFile() {
 		return new Promise((resolve, reject) => {
-			const urlList = [
-				'http://us.data.vatsim.net/vatsim-data.json',
-				'http://eu.data.vatsim.net/vatsim-data.json',
-				'http://apac.data.vatsim.net/vatsim-data.json'
-			];
-			const url = urlList[Math.floor(Math.random()*urlList.length)];
-			request(url, (error, response, body) => {
+			request('http://cluster.data.vatsim.net/vatsim-data.json', (error, response, body) => {
 				if (error) reject(error);
 
 				if (response.statusCode !== 200) {
