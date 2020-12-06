@@ -41,7 +41,7 @@ interface Client {
     qnh_i_hg: number;
     qnh_mb: number;
 }
-declare class DataHandler {
+export declare class DataHandler {
     private fileHandler;
     constructor();
     /**
@@ -101,4 +101,5 @@ declare class DataHandler {
      */
     getControllers(): Promise<Array<Client>>;
 }
-export default DataHandler;
+declare const handler: DataHandler;
+export { handler };

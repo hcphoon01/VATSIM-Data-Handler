@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import FileHandler from './fileHandler';
 const fileHandler = new FileHandler();
-class DataHandler {
+export class DataHandler {
     constructor() {
         this.fileHandler = fileHandler;
     }
@@ -214,4 +214,5 @@ class DataHandler {
         });
     }
 }
-export default DataHandler;
+const handler = new DataHandler();
+export { handler };

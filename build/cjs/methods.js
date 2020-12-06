@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.handler = exports.DataHandler = void 0;
 const fileHandler_1 = require("./fileHandler");
 const fileHandler = new fileHandler_1.default();
 class DataHandler {
@@ -216,4 +217,6 @@ class DataHandler {
         });
     }
 }
-exports.default = DataHandler;
+exports.DataHandler = DataHandler;
+const handler = new DataHandler();
+exports.handler = handler;

@@ -45,7 +45,7 @@ interface Client {
 	qnh_mb: number;
 }
 
-class DataHandler {
+export class DataHandler {
 
 	private fileHandler: FileHandler;
 
@@ -273,4 +273,5 @@ class DataHandler {
 	}
 }
 
-export default DataHandler;
+const handler = new DataHandler();
+export { handler };
