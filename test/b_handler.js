@@ -1,4 +1,4 @@
-const DataHandler = require('../build/methods');
+const DataHandler = require('../build/cjs/methods');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -6,7 +6,7 @@ chai.should();
 
 const fs = require('fs');
 const path = require('path');
-const handler = new DataHandler();
+const handler = new DataHandler.default();
 
 const jsonFile = path.basename('../vatsimData.json');
 

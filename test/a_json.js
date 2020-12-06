@@ -4,8 +4,8 @@ chai.use(require('chai-json'));
 chai.use(chaiAsPromised);
 chai.should();
 
-const DataHandler = require('../build/methods');
-const FileHandler = require('../build/fileHandler');
+const DataHandler = require('../build/cjs/methods');
+const FileHandler = require('../build/cjs/fileHandler');
 const expect = require('chai').expect;
 const path = require('path');
 const fs = require('fs');
