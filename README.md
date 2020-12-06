@@ -1,5 +1,5 @@
 [build_status]: https://travis-ci.org/hcphoon01/VATSIM-Data-Handler.svg?branch=master
-[coverage_status]: https://coveralls.io/repos/github/hcphoon01/VATSIM-Data-Handler/badge.svg?branch=master
+[coverage_status]: https://img.shields.io/coveralls/github/hcphoon01/VATSIM-Data-Handler
 [discord_badge]: https://img.shields.io/discord/580346191854960641
 [version_badge]: https://img.shields.io/github/v/tag/hcphoon01/vatsim-data-handler
 [license_badge]: https://img.shields.io/github/license/hcphoon01/vatsim-data-handler
