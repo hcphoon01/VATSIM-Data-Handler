@@ -2,10 +2,17 @@
   "name": "vatsim-data-handler",
   "version": "4.1.0",
   "description": "A data handler for the VATSIM status system",
-  "main": "src/methods.js",
+  "main": "./build/cjs/methods.js",
+  "module": "./build/esm/methods.js",
+  "types": "./build/cjs/methods.d.js",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "test": "mocha --reporter spec",
-    "cover": "node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec test/* --require @babel/register --exit"
+    "cover": "node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec test/* --require @babel/register --exit",
+    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "prepublish": "npm run tsc"
   },
   "repository": {
     "type": "git",
@@ -24,21 +31,23 @@
   },
   "homepage": "https://github.com/hcphoon01/VATSIM-Data-Handler#readme",
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/register": "^7.8.6",
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/register": "^7.12.1",
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-json": "^1.0.0",
-    "coveralls": "^3.0.6",
+    "coveralls": "^3.1.0",
     "istanbul": "^1.1.0-alpha.1",
-    "jshint": "^2.10.2",
-    "mocha": "^6.2.1",
-    "nodemon": "^1.19.3"
+    "jshint": "^2.12.0",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6"
   },
   "dependencies": {
-    "eslint": "^6.8.0",
+    "@types/node": "^14.14.10",
+    "@types/request": "^2.48.5",
+    "eslint": "^7.15.0",
     "request": "^2.88.0"
   }
 }

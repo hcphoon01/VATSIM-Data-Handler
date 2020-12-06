@@ -1,4 +1,4 @@
-const DataHandler = require('../src/methods');
+const DataHandler = require('../build/methods');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);

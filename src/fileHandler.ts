@@ -1,6 +1,15 @@
-const fs = require('fs');
+import * as fs from 'fs';
+import { RequestResponse } from 'request';
 const request = require('request');
 const EventEmitter = require('events');
+
+interface Client {
+	clienttype: string;
+}
+
+interface Diff {
+	[key: string]: any
+}
 
 class FileHandler extends EventEmitter {
 	constructor() {
@@ -14,7 +23,7 @@ class FileHandler extends EventEmitter {
 		if (!fs.existsSync('vatsimData.json')) await this.initialUpdate();
 
 		const file = fs.readFileSync('vatsimData.json');
-		const parsed = JSON.parse(file);
+		const parsed = JSON.parse(file.toString());
 		const oldDT = Date.parse(parsed.updated_date);
 
 		const dateDifference = Date.now() - oldDT;
@@ -25,7 +34,7 @@ class FileHandler extends EventEmitter {
 		return false;
 	}
 
-	async update() {
+	async update(): Promise<any> {
 		fs.copyFile('vatsimData.json', 'oldData.json', (err) => {
 			if (err) console.log(err);
 		});
@@ -34,15 +43,16 @@ class FileHandler extends EventEmitter {
 
 		parsedJSON.updated_date = new Date();
 		const json = JSON.stringify(parsedJSON);
-		fs.writeFileSync('vatsimData.json', json, function(err, result) {
-			if(err) console.log(err);
-		});
+		fs.writeFileSync('vatsimData.json', json);
 		const oldFile = fs.readFileSync('oldData.json');
 		const newFile = fs.readFileSync('vatsimData.json');
-		const oldParsed = JSON.parse(oldFile);
-		const newParsed = JSON.parse(newFile);
-		const diff = compareJson.map(oldParsed.clients, newParsed.clients);
-		const result = {};
+		const oldParsed = JSON.parse(oldFile.toString());
+		const newParsed = JSON.parse(newFile.toString());
+		const diff: Diff = compareJson.map(oldParsed.clients, newParsed.clients);
+		const result: {
+			[key: string]: any
+			created?: Array<Client>
+		} = {};
 		for (const {type, data} of Object.values(diff)) {
 			if (result[type]) {
 				result[type].push(data);
@@ -62,10 +72,10 @@ class FileHandler extends EventEmitter {
 				}
 			}
 			if (newControllers.length > 0){
-				process.emit('newController', newControllers);
+				(process.emit as Function)('newController', newControllers);
 			}
 			if (newPilots.length > 0) {
-				process.emit('newPilot', newPilots);
+				(process.emit as Function)('newPilot', newPilots);
 			}
 		}
 	}
@@ -76,14 +86,12 @@ class FileHandler extends EventEmitter {
 
 		parsedJSON.updated_date = new Date();
 		const json = JSON.stringify(parsedJSON);
-		fs.writeFileSync('vatsimData.json', json, function(err, result) {
-			if(err) console.log(err);
-		});
+		fs.writeFileSync('vatsimData.json', json);
 	}
 
-	downloadFile() {
+	downloadFile(): Promise<any> {
 		return new Promise((resolve, reject) => {
-			request('http://cluster.data.vatsim.net/vatsim-data.json', (error, response, body) => {
+			request('http://cluster.data.vatsim.net/vatsim-data.json', (error: RequestResponse, response: RequestResponse, body: RequestResponse) => {
 				if (error) reject(error);
 
 				if (response.statusCode !== 200) {
@@ -175,4 +183,4 @@ var compareJson = function() {
 	  };
 }();
 
-module.exports = FileHandler;
+export default FileHandler;

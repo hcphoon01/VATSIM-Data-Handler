@@ -4,13 +4,13 @@ chai.use(require('chai-json'));
 chai.use(chaiAsPromised);
 chai.should();
 
-const DataHandler = require('../src/methods');
-const FileHandler = require('../src/fileHandler');
+const DataHandler = require('../build/methods');
+const FileHandler = require('../build/fileHandler');
 const expect = require('chai').expect;
 const path = require('path');
 const fs = require('fs');
 
-const fileHandler = new FileHandler();
+const fileHandler = new FileHandler.default();
 const json = path.basename('../vatsimData.json');
 
 describe('#json handling', () => {

@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "./build/esm",
+        "allowJs": true,
+        "target": "ES2015",
+        "moduleResolution": "node",
+        "module": "ES2020",
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}
