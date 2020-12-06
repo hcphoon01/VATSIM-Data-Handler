@@ -5,7 +5,7 @@
 [license_badge]: https://img.shields.io/github/license/hcphoon01/vatsim-data-handler
 [discord_invite]: https://discord.gg/fwK8QfD
 
-# VATSIM Data Handler 
+# VATSIM Data Handler
 
 A data handler for the VATSIM status system coded in JavaScript
 
@@ -15,7 +15,7 @@ A data handler for the VATSIM status system coded in JavaScript
 |-----------------|--------------------------------------------------------------------------------------|---------------------------------|
 | Build           | [TravisCI](https://travis-ci.org/hcphoon01/VATSIM-Data-Handler)                      | ![build_status]                 |
 | Coverage        | [Coveralls](https://coveralls.io/github/hcphoon01/VATSIM-Data-Handler?branch=master) | ![coverage_status]              |
-| Discord		  | [Discord][discord_invite]                  											 | ![discord_badge]            	   |
+| Discord         | [Discord][discord_invite]                                                            | ![discord_badge]                |
 | Github Version  | [GitHub](https://img.shields.io/github/package-json/v/hcphoon01/vatsim-data-handler) | ![version_badge]                |
 | License         | [License](https://github.com/hcphoon01/VATSIM-Data-Handler/blob/master/LICENSE)      | ![license_badge]                |
 
@@ -26,11 +26,11 @@ A data handler for the VATSIM status system coded in JavaScript
 ## Usage
 
   ```javascript
-  const DataHandler = require('vatsim-data-handler');
-  const handler = new DataHandler();
+  const {handler} = require('vatsim-data-handler');
 
   handler.getSupervisors().then(val => console.log(val));
   ```
+
   This would log the number of clients connected to the VATSIM network
 
 ## Available methods
@@ -50,20 +50,22 @@ A data handler for the VATSIM status system coded in JavaScript
 * `on('newPilot')` - Triggered when a new pilot, or when new pilots, connect to the network
 
 ```javascript
-const DataHandler = require('vatsim-data-handler');
-const handler = new DataHandler();
-
 process.on("newController", (data) => {
   console.log(data);
 })
 ```
+
 This would log any new controllers, including observers, that connect to the VATSIM network.
 
-### Deprecated - from v2.0.0 + 
 ------
+
+### Deprecated - from v2.0.0 +
+
 * `getClientCount()` - Returns the number of clients connected to the VATSIM network (Replaced by `getCount(type)`)
 * `getPilotCount()` - Returns the number of pilots connected to the VATSIM network (Replaced by `getCount(type)`)
 * `getControllerCount()` - Returns the number of controllers connected to the VATSIM network (Replaced by `getCount(type)`)
+
+------
 
 ## Tests
 
