@@ -11,11 +11,13 @@ const FileHandler = require('../build/cjs/fileHandler');
 const expect = require('chai').expect;
 const path = require('path');
 const fs = require('fs');
+const { waitForDebugger } = require('inspector');
 
 const fileHandler = new FileHandler.default();
 const json = path.basename('../vatsimData.json');
 
-describe('#json handling', () => {
+describe('#json handling', function () {
+	this.timeout(5000);
 
 	before(() => {
 		return new Promise(async (resolve) => {
@@ -58,6 +60,14 @@ describe('#json handling', () => {
 		expect(fileHandler.shouldUpdate()).to.eventually.equal(false);
 	});
 
+	it('should get a different copy of the vatsim data file after 2 minutes', async function () {
+		this.timeout(140000);
+		await wait(130000);
+		fileHandler.update().then(() => {
+			expect(json).to.not.equal(file('oldVatsimData.json'));
+		});
+	});
+
 	after(() => {
 		return new Promise(async (resolve) => {
 			try {
@@ -65,7 +75,10 @@ describe('#json handling', () => {
 				resolve();
 			} catch (err) {
 				console.error(err);
+				resolve();
 			}
 		})
-	})
+	});
+
+	const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 });

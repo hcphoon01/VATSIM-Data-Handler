@@ -192,13 +192,7 @@ describe('#Data Handling', () => {
 	});
 
 	after(() => {
-		const file = fs.readFileSync(jsonFile);
-		const parsed = JSON.parse(file);
-
-		parsed.clients.pop();
-		parsed.clients.pop();
-
-		const json = JSON.stringify(parsed);
-		fs.writeFileSync('vatsimData.json', json);
+		fs.unlinkSync('vatsimData.json');
+		fs.unlinkSync('oldData.json');
 	});
 });
