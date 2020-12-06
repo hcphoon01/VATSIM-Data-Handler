@@ -1,6 +1,6 @@
 {
   "name": "vatsim-data-handler",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A data handler for the VATSIM status system",
   "main": "./build/cjs/methods.js",
   "module": "./build/esm/methods.js",
