@@ -61,17 +61,17 @@ class DataHandler {
 	 * @returns {Number} The number of clients based on the type.
 	 */
 
-	async getCount(type: string): Promise<number> {
+	async getCount(type: string): Promise<number | undefined> {
 		const parsed = await this.fileHandler.loadFile();
 		switch (type) {
 			case 'all':
 				return (parsed.clients.length);
 			case 'pilots':
-				let pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+				let pilots = parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
 
 				return pilots.length;
 			case 'controllers':
-				let controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+				let controllers = parsed.clients.filter((obj: Client) => obj.clienttype == 'ATC');
 
 				return controllers.length;
 			default:
@@ -86,7 +86,7 @@ class DataHandler {
 	 * 
 	 * @returns {Array} An array containing all clients relating to a given airport ICAO.
 	 */
-	async getAirportInfo(airport: string): Promise<Object> {
+	async getAirportInfo(airport: string): Promise<Object | undefined> {
 		if (!airport) {
 			return undefined;
 		} else {
@@ -110,7 +110,10 @@ class DataHandler {
 				}
 			}
 
-			let airportInfo = {};
+			let airportInfo: {
+				pilots?: Array<Client>;
+				controllers?: Array<Client>
+			} = {};
 			airportInfo['pilots'] = airportInfoPilots;
 			airportInfo['controllers'] = airportInfoControllers;
 
@@ -124,7 +127,7 @@ class DataHandler {
 	 * @returns {Array} An array containing the top 10 most popular airports.
 	 */
 
-	async getPopularAirports(): Promise<Array<string>> {
+	async getPopularAirports(): Promise<Array<Object>> {
 		const parsed = await this.fileHandler.loadFile();
 		let airportList = [];
 		let newAirport: boolean;
@@ -182,7 +185,7 @@ class DataHandler {
 		const parsed = await this.fileHandler.loadFile();
 		let pilotDetails = [];
 
-		const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+		const pilots = parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
 
 		for (let i = 0; i < pilots.length; i++) {
 			const pilot = pilots[i];
@@ -202,7 +205,7 @@ class DataHandler {
 
 	async getClients(): Promise<Array<Client>> {
 		const parsed = await this.fileHandler.loadFile();
-		return parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+		return parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
 	}
 
 	/**
@@ -215,12 +218,12 @@ class DataHandler {
 
 	async getClientDetails(cid: number): Promise<Client> {
 		const parsed = await this.fileHandler.loadFile();
-		let pilotDetails = [];
+		let pilotDetails: Array<Client> = [];
 
-		const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+		const pilots = parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
 
-		pilots.forEach(pilot => {
-			if (pilot.cid == cid) {
+		pilots.forEach((pilot: Client) => {
+			if (pilot.cid == cid.toString()) {
 				pilotDetails.push(pilot);
 			}
 		});
@@ -235,11 +238,11 @@ class DataHandler {
 
 	async getSupervisors(): Promise<Array<Client>> {
 		const parsed = await this.fileHandler.loadFile();
-		let supervisorList = [];
+		let supervisorList: Array<Client> = [];
 
-		const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+		const controllers = parsed.clients.filter((obj: Client) => obj.clienttype == 'ATC');
 
-		controllers.map(controller => {
+		controllers.map((controller: Client) => {
 			if (controller.rating === 11 || controller.rating === 12) {
 				supervisorList.push(controller);
 			}
@@ -256,12 +259,12 @@ class DataHandler {
 
 	async getControllers(): Promise<Array<Client>> {
 		const parsed = await this.fileHandler.loadFile();
-		let controllerList = [];
+		let controllerList: Array<Client> = [];
 
-		const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+		const controllers = parsed.clients.filter((obj: Client) => obj.clienttype == 'ATC');
 
-		controllers.map(controller => {
-			if (controller.frequency != 199.998) {
+		controllers.map((controller: Client) => {
+			if (controller.frequency != '199.998') {
 				controllerList.push(controller);
 			}
 		});

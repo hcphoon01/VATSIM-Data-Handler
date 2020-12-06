@@ -115,7 +115,7 @@ var compareJson = function() {
 		VALUE_UPDATED: 'updated',
 		VALUE_DELETED: 'deleted',
 		VALUE_UNCHANGED: 'unchanged',
-		map: function(obj1, obj2) {
+		map: function(obj1:any, obj2:any) {
 		  if (this.isFunction(obj1) || this.isFunction(obj2)) {
 			console.log('Invalid argument. Function given, object expected.');
 		  }
@@ -126,7 +126,9 @@ var compareJson = function() {
 			};
 		  }
 	
-		  var diff = {};
+		  var diff: {
+			  [key: string]: any
+		  } = {};
 		  for (var key in obj1) {
 			if (this.isFunction(obj1[key])) {
 			  continue;
@@ -150,7 +152,7 @@ var compareJson = function() {
 		  return diff;
 	
 		},
-		compareValues: function (value1, value2) {
+		compareValues: function (value1: any, value2: any) {
 		  if (value1 === value2) {
 			return this.VALUE_UNCHANGED;
 		  }
@@ -165,19 +167,19 @@ var compareJson = function() {
 		  }
 		  return this.VALUE_UPDATED;
 		},
-		isFunction: function (x) {
+		isFunction: function (x:string) {
 		  return Object.prototype.toString.call(x) === '[object Function]';
 		},
-		isArray: function (x) {
+		isArray: function (x:string) {
 		  return Object.prototype.toString.call(x) === '[object Array]';
 		},
-		isDate: function (x) {
+		isDate: function (x:string) {
 		  return Object.prototype.toString.call(x) === '[object Date]';
 		},
-		isObject: function (x) {
+		isObject: function (x:string) {
 		  return Object.prototype.toString.call(x) === '[object Object]';
 		},
-		isValue: function (x) {
+		isValue: function (x:string) {
 		  return !this.isObject(x) && !this.isArray(x);
 		}
 	  };

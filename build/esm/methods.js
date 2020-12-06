@@ -27,10 +27,10 @@ class DataHandler {
                 case 'all':
                     return (parsed.clients.length);
                 case 'pilots':
-                    let pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+                    let pilots = parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
                     return pilots.length;
                 case 'controllers':
-                    let controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
+                    let controllers = parsed.clients.filter((obj) => obj.clienttype == 'ATC');
                     return controllers.length;
                 default:
                     return undefined;
@@ -136,7 +136,7 @@ class DataHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let pilotDetails = [];
-            const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+            const pilots = parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
             for (let i = 0; i < pilots.length; i++) {
                 const pilot = pilots[i];
                 if (pilot.callsign == callsign) {
@@ -154,7 +154,7 @@ class DataHandler {
     getClients() {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
-            return parsed.clients.filter(obj => obj.clienttype == 'PILOT');
+            return parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
         });
     }
     /**
@@ -168,9 +168,9 @@ class DataHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let pilotDetails = [];
-            const pilots = parsed.clients.filter(obj => obj.clienttype == 'PILOT');
-            pilots.forEach(pilot => {
-                if (pilot.cid == cid) {
+            const pilots = parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
+            pilots.forEach((pilot) => {
+                if (pilot.cid == cid.toString()) {
                     pilotDetails.push(pilot);
                 }
             });
@@ -186,8 +186,8 @@ class DataHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let supervisorList = [];
-            const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
-            controllers.map(controller => {
+            const controllers = parsed.clients.filter((obj) => obj.clienttype == 'ATC');
+            controllers.map((controller) => {
                 if (controller.rating === 11 || controller.rating === 12) {
                     supervisorList.push(controller);
                 }
@@ -204,9 +204,9 @@ class DataHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let controllerList = [];
-            const controllers = parsed.clients.filter(obj => obj.clienttype == 'ATC');
-            controllers.map(controller => {
-                if (controller.frequency != 199.998) {
+            const controllers = parsed.clients.filter((obj) => obj.clienttype == 'ATC');
+            controllers.map((controller) => {
+                if (controller.frequency != '199.998') {
                     controllerList.push(controller);
                 }
             });

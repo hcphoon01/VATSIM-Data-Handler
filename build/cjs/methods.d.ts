@@ -51,7 +51,7 @@ declare class DataHandler {
      *
      * @returns {Number} The number of clients based on the type.
      */
-    getCount(type: string): Promise<number>;
+    getCount(type: string): Promise<number | undefined>;
     /**
      * Get information for clients relating to a given airport ICAO.
      *
@@ -59,13 +59,13 @@ declare class DataHandler {
      *
      * @returns {Array} An array containing all clients relating to a given airport ICAO.
      */
-    getAirportInfo(airport: string): Promise<Object>;
+    getAirportInfo(airport: string): Promise<Object | undefined>;
     /**
      * Get the most popular airports based on client count
      *
      * @returns {Array} An array containing the top 10 most popular airports.
      */
-    getPopularAirports(): Promise<Array<string>>;
+    getPopularAirports(): Promise<Array<Object>>;
     /**
      * Get the flight information for given callsign.
      *
