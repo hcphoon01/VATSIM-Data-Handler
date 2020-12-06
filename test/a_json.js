@@ -11,7 +11,6 @@ const FileHandler = require('../build/cjs/fileHandler');
 const expect = require('chai').expect;
 const path = require('path');
 const fs = require('fs');
-const { waitForDebugger } = require('inspector');
 
 const fileHandler = new FileHandler.default();
 const json = path.basename('../vatsimData.json');
