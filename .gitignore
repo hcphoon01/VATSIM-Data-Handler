@@ -62,5 +62,5 @@ typings/
 
 # miscellaneous items
 vatsimData.json
-oldData.json
+old*.json
 test.js
