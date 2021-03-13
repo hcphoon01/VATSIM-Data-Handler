@@ -48,8 +48,15 @@ export class DataHandler {
                 return undefined;
             }
             else {
+                let airportInfo = {};
                 const parsed = yield this.fileHandler.loadFile();
                 let airportInfoControllers = [];
+                let airportInfoPilots = parsed.pilots.filter((pilot) => {
+                    var _a, _b;
+                    return ((_a = pilot.flight_plan) === null || _a === void 0 ? void 0 : _a.departure) === airport ||
+                        ((_b = pilot.flight_plan) === null || _b === void 0 ? void 0 : _b.arrival) === airport;
+                });
+                airportInfo["pilots"] = airportInfoPilots;
                 for (let i = 0; i < parsed.controllers.length; i++) {
                     const client = parsed.controllers[i];
                     if (client.callsign.includes(airport) &&
@@ -62,14 +69,14 @@ export class DataHandler {
                         airportInfoControllers.push(client);
                     }
                 }
-                let airportInfoPilots = parsed.pilots.filter((pilot) => {
-                    var _a, _b;
-                    return ((_a = pilot.flight_plan) === null || _a === void 0 ? void 0 : _a.departure) === airport ||
-                        ((_b = pilot.flight_plan) === null || _b === void 0 ? void 0 : _b.arrival) === airport;
-                });
-                let airportInfo = {};
-                airportInfo["pilots"] = airportInfoPilots;
                 airportInfo["controllers"] = airportInfoControllers;
+                for (let i = 0; i < parsed.atis.length; i++) {
+                    const atis = parsed.atis[i];
+                    if (atis.callsign.includes(airport)) {
+                        console.log(atis);
+                        airportInfo["atis"] = atis;
+                    }
+                }
                 return airportInfo;
             }
         });
