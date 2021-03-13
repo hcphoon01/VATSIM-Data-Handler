@@ -1,276 +1,344 @@
-import FileHandler from './fileHandler';
+import FileHandler from "./fileHandler";
 const fileHandler = new FileHandler();
 
-interface Client {
-	callsign: string;
-	cid: string;
-	realname: string;
-	clienttype: string;
-	frequency: string;
-	latitude: number;
-	longitude: number;
-	altitude: number;
-	groundspeed: number;
-	planned_aircraft: string;
-	planned_tascruise: string;
-	planned_depairport: string;
-	planned_altitude: string;
-	planned_destairport: string;
-	server: string;
-	protrevision: number;
-	rating: number;
-	transponder: number;
-	facilitytype: number;
-	visualrange: number;
-	planned_revision: string;
-	planned_flighttype: string;
-	planned_deptime: string;
-	planned_actdeptime: string;
-	planned_hrsenroute: string;
-	planned_minenroute: string;
-	planned_hrsfuel: string;
-	planned_minfiel: string;
-	planned_altairport: string;
-	planned_remarks: string;
-	planned_route: string;
-	planned_depairport_lat: number;
-	planned_depairport_lon: number;
-	planned_destairport_lat: number;
-	planned_destairport_lon: number;
-	atis_message: string;
-	time_last_atis_received: string;
-	time_logon: string;
-	heading: number;
-	qnh_i_hg: number,
-	qnh_mb: number;
+interface File {
+  general: {
+    version: number;
+    reload: number;
+    update: string;
+    update_timestamp: string;
+    connected_clients: number;
+    unique_users: number;
+  };
+  pilots: Array<Pilot>;
+  controllers: Array<Controller>;
+  atis: Array<ATIS>;
+  servers: Array<Servers>;
+  prefiles: Array<Prefiles>;
+  facilities: Array<Facilities>;
+  ratings: Array<Ratings>;
+  pilot_ratings: Array<PilotRatings>;
+}
+
+interface Pilot {
+  cid: number;
+  name: string;
+  callsign: string;
+  server: string;
+  pilot_rating: number;
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  groundspeed: number;
+  transponder: string;
+  heading: number;
+  qnh_i_hg: number;
+  qnh_mb: number;
+  flight_plan?: {
+    flight_rules: string;
+    aircraft: string;
+    aircraft_faa: string;
+    aircraft_short: string;
+    departure: string;
+    arrival: string;
+    alternate: string;
+    cruise_tas: string;
+    altitude: string;
+    deptime: string;
+    enroute_time: string;
+    fuel_time: string;
+    remarks: string;
+    route: string;
+  };
+  logon_time: string;
+  last_updated: string;
+}
+
+interface Controller {
+  cid: number;
+  name: string;
+  callsign: string;
+  frequency: string;
+  facility: number;
+  rating: number;
+  server: string;
+  visual_range: number;
+  text_atis?: Array<string>;
+  last_updated: string;
+  logon_time: string;
+}
+
+interface ATIS {
+  cid: number;
+  name: string;
+  callsign: string;
+  frequency: string;
+  facility: number;
+  rating: number;
+  server: string;
+  visual_range: number;
+  atis_code: string;
+  text_atis?: Array<string>;
+  last_updated: string;
+  logon_time: string;
+}
+
+interface Servers {
+  ident: string;
+  hostname_or_ip: string;
+  location: string;
+  name: string;
+  clients_connection_allowed: number;
+}
+
+interface Prefiles {
+  cid: number;
+  name: string;
+  callsign: string;
+  flight_plan: {
+    flight_rules: string;
+    aircraft: string;
+    aircraft_faa: string;
+    aircraft_short: string;
+    departure: string;
+    arrival: string;
+    alternate: string;
+    cruise_tas: string;
+    altitude: string;
+    deptime: string;
+    enroute_time: string;
+    fuel_time: string;
+    remarks: string;
+    route: string;
+  };
+  last_updated: string;
+}
+
+interface Facilities {
+  id: number;
+  short: string;
+  long: string;
+}
+
+interface Ratings {
+  id: number;
+  short: string;
+  long: string;
+}
+
+interface PilotRatings {
+  id: number;
+  short_name: string;
+  long_name: string;
 }
 
 export class DataHandler {
+  private fileHandler: FileHandler;
 
-	private fileHandler: FileHandler;
+  constructor() {
+    this.fileHandler = fileHandler;
+  }
 
-	constructor() {
-		this.fileHandler = fileHandler;
-	}
+  /**
+   * Get connected client count.
+   *
+   * @param {string} type Type of client to return (all, pilots or controllers).
+   *
+   * @returns {Number | undefined} The number of clients based on the type.
+   */
 
-	/**
-	 * Get connected client count.
-	 * 
-	 * @param {string} type Type of client to return (all, pilots or controllers).
-	 * 
-	 * @returns {Number} The number of clients based on the type.
-	 */
+  async getCount(type: string): Promise<number | undefined> {
+    const parsed: File = await this.fileHandler.loadFile();
+    switch (type) {
+      case "all":
+        return parsed.general.unique_users;
+      case "pilots":
+        return parsed.pilots.length;
+      case "controllers":
+        return parsed.controllers.length;
+      default:
+        return undefined;
+    }
+  }
 
-	async getCount(type: string): Promise<number | undefined> {
-		const parsed = await this.fileHandler.loadFile();
-		switch (type) {
-			case 'all':
-				return (parsed.clients.length);
-			case 'pilots':
-				let pilots = parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
+  /**
+   * Get information for clients relating to a given airport ICAO.
+   *
+   * @param {string} airport Airport ICAO code to get information for.
+   *
+   * @returns {Array | undefined} An array containing all clients relating to a given airport ICAO.
+   */
+  async getAirportInfo(airport: string): Promise<Object | undefined> {
+    if (!airport) {
+      return undefined;
+    } else {
+      const parsed: File = await this.fileHandler.loadFile();
 
-				return pilots.length;
-			case 'controllers':
-				let controllers = parsed.clients.filter((obj: Client) => obj.clienttype == 'ATC');
+      let airportInfoControllers = [];
 
-				return controllers.length;
-			default:
-				return undefined;
-		}
-	}
+      for (let i = 0; i < parsed.controllers.length; i++) {
+        const client = parsed.controllers[i];
+        if (
+          client.callsign.includes(airport) &&
+          client.frequency !== "199.998"
+        ) {
+          airportInfoControllers.push(client);
+        } else if (
+          client.callsign.includes(airport.substr(1) + "_") &&
+          client.frequency !== "199.998" &&
+          airport.startsWith("K")
+        ) {
+          airportInfoControllers.push(client);
+        }
+      }
 
-	/**
-	 * Get information for clients relating to a given airport ICAO.
-	 * 
-	 * @param {string} airport Airport ICAO code to get information for.
-	 * 
-	 * @returns {Array} An array containing all clients relating to a given airport ICAO.
-	 */
-	async getAirportInfo(airport: string): Promise<Object | undefined> {
-		if (!airport) {
-			return undefined;
-		} else {
-			const parsed = await this.fileHandler.loadFile();
-			let airportInfoPilots = [];
-			let airportInfoControllers = [];
+      let airportInfoPilots = parsed.pilots.filter(
+        (pilot) =>
+          pilot.flight_plan?.departure === airport ||
+          pilot.flight_plan?.arrival === airport
+      );
 
-			for (let i = 0; i < parsed.clients.length; i++) {
-				const client = parsed.clients[i];
-				if (client.clienttype == 'PILOT') {
-					if (client.planned_depairport === airport || client.planned_destairport === airport) {
-						airportInfoPilots.push(client);
-					}
-				} else if (client.clienttype == 'ATC') {
-					if (client.callsign.includes(airport) && client.frequency !== 199.998) {
-						airportInfoControllers.push(client);
-					}
-					else if (client.callsign.includes(airport.substr(1) + '_') && client.frequency !== 199.998 && airport.startsWith('K')) {
-						airportInfoControllers.push(client);
-					}
-				}
-			}
+      let airportInfo: {
+        pilots?: Array<Pilot>;
+        controllers?: Array<Controller>;
+      } = {};
+      airportInfo["pilots"] = airportInfoPilots;
+      airportInfo["controllers"] = airportInfoControllers;
 
-			let airportInfo: {
-				pilots?: Array<Client>;
-				controllers?: Array<Client>
-			} = {};
-			airportInfo['pilots'] = airportInfoPilots;
-			airportInfo['controllers'] = airportInfoControllers;
+      return airportInfo;
+    }
+  }
 
-			return airportInfo;
-		}
-	}
+  /**
+   * Get the most popular airports based on client count
+   *
+   * @returns {Array} An array containing the top 10 most popular airports.
+   */
 
-	/**
-	 * Get the most popular airports based on client count
-	 * 
-	 * @returns {Array} An array containing the top 10 most popular airports.
-	 */
+  async getPopularAirports(): Promise<Array<Object>> {
+    const parsed: File = await this.fileHandler.loadFile();
+    let airportList = [];
+    let newAirport: boolean;
 
-	async getPopularAirports(): Promise<Array<Object>> {
-		const parsed = await this.fileHandler.loadFile();
-		let airportList = [];
-		let newAirport: boolean;
+    for (let i = 0; i < parsed.pilots.length; i++) {
+      const pilot = parsed.pilots[i];
+      if (pilot.flight_plan && pilot.flight_plan.departure !== null) {
+        newAirport = true;
+        airportList.forEach((airport) => {
+          if (airport.id === pilot.flight_plan?.departure) {
+            airport.count++;
+            newAirport = false;
+          }
+        });
+        if (newAirport) {
+          airportList.push({
+            id: pilot.flight_plan?.departure,
+            count: 1,
+          });
+        }
+      }
+      if (pilot.flight_plan && pilot.flight_plan.arrival !== null) {
+        newAirport = true;
+        airportList.forEach((airport) => {
+          if (airport.id === pilot.flight_plan?.arrival) {
+            airport.count++;
+            newAirport = false;
+          }
+        });
+        if (newAirport) {
+          airportList.push({
+            id: pilot.flight_plan?.arrival,
+            count: 1,
+          });
+        }
+      }
+    }
 
-		for (let i = 0; i < parsed.clients.length; i++) {
-			const pilot = parsed.clients[i];
-			if (pilot.clienttype == 'PILOT') {
-				if (pilot.planned_depairport !== null) {
-					newAirport = true;
-					airportList.forEach(airport => {
-						if (airport.id === pilot.planned_depairport) {
-							airport.count++;
-							newAirport = false;
-						}
-					});
-					if (newAirport) {
-						airportList.push({
-							id: pilot.planned_depairport,
-							count: 1
-						});
-					}
-				}
-				if (pilot.planned_destairport !== null) {
-					newAirport = true;
-					airportList.forEach(airport => {
-						if (airport.id === pilot.planned_destairport) {
-							airport.count++;
-							newAirport = false;
-						}
-					});
-					if (newAirport) {
-						airportList.push({
-							id: pilot.planned_destairport,
-							count: 1
-						});
-					}
-				}
-			}
-		}
+    airportList.sort((a, b) => b.count - a.count);
 
-		airportList.sort((a, b) => b.count - a.count);
+    return airportList.slice(0, 10);
+  }
 
-		return (airportList.slice(0, 10));
-	}
+  /**
+   * Get the flight information for given callsign.
+   *
+   * @param {String} callsign The callsign to get the flight information for.
+   *
+   * @returns {Object} An object containing flight information.
+   */
 
-	/**
-	 * Get the flight information for given callsign.
-	 * 
-	 * @param {String} callsign The callsign to get the flight information for.
-	 * 
-	 * @returns {Object} An object containing flight information.
-	 */
+  async getFlightInfo(callsign: string): Promise<Pilot> {
+    const parsed: File = await this.fileHandler.loadFile();
 
-	async getFlightInfo(callsign: string): Promise<Client> {
-		const parsed = await this.fileHandler.loadFile();
-		let pilotDetails = [];
+    let pilot = parsed.pilots.filter((obj: Pilot) => obj.callsign === callsign);
 
-		const pilots = parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
+    return pilot[0];
+  }
 
-		for (let i = 0; i < pilots.length; i++) {
-			const pilot = pilots[i];
-			if (pilot.callsign == callsign) {
-				pilotDetails.push(pilot);
-			}
-		}
+  /**
+   * Get all connected pilots.
+   *
+   * @returns {Array} An array containing all connected pilots.
+   */
 
-		return pilotDetails[0];
-	}
+  async getClients(): Promise<Array<Pilot>> {
+    const parsed: File = await this.fileHandler.loadFile();
+    return parsed.pilots;
+  }
 
-	/**
-	 * Get all connected pilots.
-	 * 
-	 * @returns {Array} An array containing all connected pilots.
-	 */
+  /**
+   * Get the flight information for a connected pilot.
+   *
+   * @param {Number} cid The VATSIM CID of the connected pilot.
+   *
+   * @returns {Object} An object containing flight information.
+   */
 
-	async getClients(): Promise<Array<Client>> {
-		const parsed = await this.fileHandler.loadFile();
-		return parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
-	}
+  async getClientDetails(cid: number): Promise<Pilot> {
+    const parsed: File = await this.fileHandler.loadFile();
 
-	/**
-	 * Get the flight information for a connected pilot.
-	 * 
-	 * @param {Number} cid The VATSIM CID of the connected pilot.
-	 * 
-	 * @returns {Object} An object containing flight information.
-	 */
+    let pilot = parsed.pilots.filter((obj: Pilot) => obj.cid == cid);
 
-	async getClientDetails(cid: number): Promise<Client> {
-		const parsed = await this.fileHandler.loadFile();
-		let pilotDetails: Array<Client> = [];
+    return pilot[0];
+  }
 
-		const pilots = parsed.clients.filter((obj: Client) => obj.clienttype == 'PILOT');
+  /**
+   * Get all the connected supervisors.
+   *
+   * @returns {Array} An array containing all connected supervisors.
+   */
 
-		pilots.forEach((pilot: Client) => {
-			if (pilot.cid == cid.toString()) {
-				pilotDetails.push(pilot);
-			}
-		});
-		return pilotDetails[0];
-	}
+  async getSupervisors(): Promise<Array<Controller>> {
+    const parsed: File = await this.fileHandler.loadFile();
+    let supervisorList: Array<Controller> = [];
 
-	/**
-	 * Get all the connected supervisors.
-	 * 
-	 * @returns {Array} An array containing all connected supervisors.
-	 */
+    parsed.controllers.map((controller: Controller) => {
+      if (controller.rating === 11 || controller.rating === 12) {
+        supervisorList.push(controller);
+      }
+    });
 
-	async getSupervisors(): Promise<Array<Client>> {
-		const parsed = await this.fileHandler.loadFile();
-		let supervisorList: Array<Client> = [];
+    return supervisorList;
+  }
 
-		const controllers = parsed.clients.filter((obj: Client) => obj.clienttype == 'ATC');
+  /**
+   * Get all the connected controllers.
+   *
+   * @returns {Array} An array containing all connected controllers.
+   */
 
-		controllers.map((controller: Client) => {
-			if (controller.rating === 11 || controller.rating === 12) {
-				supervisorList.push(controller);
-			}
-		});
+  async getControllers(): Promise<Array<Controller>> {
+    const parsed: File = await this.fileHandler.loadFile();
+    let controllerList: Array<Controller> = [];
 
-		return supervisorList;
-	}
+    parsed.controllers.map((controller: Controller) => {
+      if (controller.facility !== 0) {
+        controllerList.push(controller);
+      }
+    });
 
-	/**
-	 * Get all the connected controllers.
-	 * 
-	 * @returns {Array} An array containing all connected controllers.
-	 */
-
-	async getControllers(): Promise<Array<Client>> {
-		const parsed = await this.fileHandler.loadFile();
-		let controllerList: Array<Client> = [];
-
-		const controllers = parsed.clients.filter((obj: Client) => obj.clienttype == 'ATC');
-
-		controllers.map((controller: Client) => {
-			if (controller.frequency != '199.998') {
-				controllerList.push(controller);
-			}
-		});
-
-		return controllerList;
-	}
+    return controllerList;
+  }
 }
 
 const handler = new DataHandler();
