@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import FileHandler from './fileHandler';
+import FileHandler from "./fileHandler";
 const fileHandler = new FileHandler();
 export class DataHandler {
     constructor() {
@@ -18,20 +18,18 @@ export class DataHandler {
      *
      * @param {string} type Type of client to return (all, pilots or controllers).
      *
-     * @returns {Number} The number of clients based on the type.
+     * @returns {Number | undefined} The number of clients based on the type.
      */
     getCount(type) {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             switch (type) {
-                case 'all':
-                    return (parsed.clients.length);
-                case 'pilots':
-                    let pilots = parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
-                    return pilots.length;
-                case 'controllers':
-                    let controllers = parsed.clients.filter((obj) => obj.clienttype == 'ATC');
-                    return controllers.length;
+                case "all":
+                    return parsed.general.unique_users;
+                case "pilots":
+                    return parsed.pilots.length;
+                case "controllers":
+                    return parsed.controllers.length;
                 default:
                     return undefined;
             }
@@ -42,7 +40,7 @@ export class DataHandler {
      *
      * @param {string} airport Airport ICAO code to get information for.
      *
-     * @returns {Array} An array containing all clients relating to a given airport ICAO.
+     * @returns {Array | undefined} An array containing all clients relating to a given airport ICAO.
      */
     getAirportInfo(airport) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -51,27 +49,27 @@ export class DataHandler {
             }
             else {
                 const parsed = yield this.fileHandler.loadFile();
-                let airportInfoPilots = [];
                 let airportInfoControllers = [];
-                for (let i = 0; i < parsed.clients.length; i++) {
-                    const client = parsed.clients[i];
-                    if (client.clienttype == 'PILOT') {
-                        if (client.planned_depairport === airport || client.planned_destairport === airport) {
-                            airportInfoPilots.push(client);
-                        }
+                for (let i = 0; i < parsed.controllers.length; i++) {
+                    const client = parsed.controllers[i];
+                    if (client.callsign.includes(airport) &&
+                        client.frequency !== "199.998") {
+                        airportInfoControllers.push(client);
                     }
-                    else if (client.clienttype == 'ATC') {
-                        if (client.callsign.includes(airport) && client.frequency !== 199.998) {
-                            airportInfoControllers.push(client);
-                        }
-                        else if (client.callsign.includes(airport.substr(1) + '_') && client.frequency !== 199.998 && airport.startsWith('K')) {
-                            airportInfoControllers.push(client);
-                        }
+                    else if (client.callsign.includes(airport.substr(1) + "_") &&
+                        client.frequency !== "199.998" &&
+                        airport.startsWith("K")) {
+                        airportInfoControllers.push(client);
                     }
                 }
+                let airportInfoPilots = parsed.pilots.filter((pilot) => {
+                    var _a, _b;
+                    return ((_a = pilot.flight_plan) === null || _a === void 0 ? void 0 : _a.departure) === airport ||
+                        ((_b = pilot.flight_plan) === null || _b === void 0 ? void 0 : _b.arrival) === airport;
+                });
                 let airportInfo = {};
-                airportInfo['pilots'] = airportInfoPilots;
-                airportInfo['controllers'] = airportInfoControllers;
+                airportInfo["pilots"] = airportInfoPilots;
+                airportInfo["controllers"] = airportInfoControllers;
                 return airportInfo;
             }
         });
@@ -82,47 +80,48 @@ export class DataHandler {
      * @returns {Array} An array containing the top 10 most popular airports.
      */
     getPopularAirports() {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let airportList = [];
             let newAirport;
-            for (let i = 0; i < parsed.clients.length; i++) {
-                const pilot = parsed.clients[i];
-                if (pilot.clienttype == 'PILOT') {
-                    if (pilot.planned_depairport !== null) {
-                        newAirport = true;
-                        airportList.forEach(airport => {
-                            if (airport.id === pilot.planned_depairport) {
-                                airport.count++;
-                                newAirport = false;
-                            }
-                        });
-                        if (newAirport) {
-                            airportList.push({
-                                id: pilot.planned_depairport,
-                                count: 1
-                            });
+            for (let i = 0; i < parsed.pilots.length; i++) {
+                const pilot = parsed.pilots[i];
+                if (pilot.flight_plan && pilot.flight_plan.departure !== null) {
+                    newAirport = true;
+                    airportList.forEach((airport) => {
+                        var _a;
+                        if (airport.id === ((_a = pilot.flight_plan) === null || _a === void 0 ? void 0 : _a.departure)) {
+                            airport.count++;
+                            newAirport = false;
                         }
+                    });
+                    if (newAirport) {
+                        airportList.push({
+                            id: (_a = pilot.flight_plan) === null || _a === void 0 ? void 0 : _a.departure,
+                            count: 1,
+                        });
                     }
-                    if (pilot.planned_destairport !== null) {
-                        newAirport = true;
-                        airportList.forEach(airport => {
-                            if (airport.id === pilot.planned_destairport) {
-                                airport.count++;
-                                newAirport = false;
-                            }
-                        });
-                        if (newAirport) {
-                            airportList.push({
-                                id: pilot.planned_destairport,
-                                count: 1
-                            });
+                }
+                if (pilot.flight_plan && pilot.flight_plan.arrival !== null) {
+                    newAirport = true;
+                    airportList.forEach((airport) => {
+                        var _a;
+                        if (airport.id === ((_a = pilot.flight_plan) === null || _a === void 0 ? void 0 : _a.arrival)) {
+                            airport.count++;
+                            newAirport = false;
                         }
+                    });
+                    if (newAirport) {
+                        airportList.push({
+                            id: (_b = pilot.flight_plan) === null || _b === void 0 ? void 0 : _b.arrival,
+                            count: 1,
+                        });
                     }
                 }
             }
             airportList.sort((a, b) => b.count - a.count);
-            return (airportList.slice(0, 10));
+            return airportList.slice(0, 10);
         });
     }
     /**
@@ -135,15 +134,8 @@ export class DataHandler {
     getFlightInfo(callsign) {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
-            let pilotDetails = [];
-            const pilots = parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
-            for (let i = 0; i < pilots.length; i++) {
-                const pilot = pilots[i];
-                if (pilot.callsign == callsign) {
-                    pilotDetails.push(pilot);
-                }
-            }
-            return pilotDetails[0];
+            let pilot = parsed.pilots.filter((obj) => obj.callsign === callsign);
+            return pilot[0];
         });
     }
     /**
@@ -154,7 +146,7 @@ export class DataHandler {
     getClients() {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
-            return parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
+            return parsed.pilots;
         });
     }
     /**
@@ -167,14 +159,8 @@ export class DataHandler {
     getClientDetails(cid) {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
-            let pilotDetails = [];
-            const pilots = parsed.clients.filter((obj) => obj.clienttype == 'PILOT');
-            pilots.forEach((pilot) => {
-                if (pilot.cid == cid.toString()) {
-                    pilotDetails.push(pilot);
-                }
-            });
-            return pilotDetails[0];
+            let pilot = parsed.pilots.filter((obj) => obj.cid == cid);
+            return pilot[0];
         });
     }
     /**
@@ -186,8 +172,7 @@ export class DataHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let supervisorList = [];
-            const controllers = parsed.clients.filter((obj) => obj.clienttype == 'ATC');
-            controllers.map((controller) => {
+            parsed.controllers.map((controller) => {
                 if (controller.rating === 11 || controller.rating === 12) {
                     supervisorList.push(controller);
                 }
@@ -204,9 +189,8 @@ export class DataHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const parsed = yield this.fileHandler.loadFile();
             let controllerList = [];
-            const controllers = parsed.clients.filter((obj) => obj.clienttype == 'ATC');
-            controllers.map((controller) => {
-                if (controller.frequency != '199.998') {
+            parsed.controllers.map((controller) => {
+                if (controller.facility !== 0) {
                     controllerList.push(controller);
                 }
             });

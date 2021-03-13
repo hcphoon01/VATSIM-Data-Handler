@@ -7,32 +7,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as fs from 'fs';
-const request = require('request');
-const EventEmitter = require('events');
+import * as fs from "fs";
+const request = require("request");
+const EventEmitter = require("events");
 class FileHandler extends EventEmitter {
     constructor() {
         super();
-        this.updateTimer = setInterval(this.update.bind(this), 120000);
+        this.updateTimer = setInterval(this.update.bind(this), 60000);
         this.shouldUpdate.bind(this);
     }
     shouldUpdate() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!fs.existsSync('vatsimData.json'))
+            if (!fs.existsSync("vatsimData.json"))
                 yield this.initialUpdate();
-            const file = fs.readFileSync('vatsimData.json');
+            const file = fs.readFileSync("vatsimData.json");
             const parsed = JSON.parse(file.toString());
             const oldDT = Date.parse(parsed.updated_date);
             const dateDifference = Date.now() - oldDT;
             const minutes = Math.floor(dateDifference / 60000);
-            if (minutes >= 2)
+            if (minutes >= 1)
                 yield this.update();
             return false;
         });
     }
     update() {
         return __awaiter(this, void 0, void 0, function* () {
-            fs.copyFile('vatsimData.json', 'oldData.json', (err) => {
+            fs.copyFile("vatsimData.json", "oldData.json", (err) => {
                 if (err)
                     console.log(err);
             });
@@ -40,14 +40,23 @@ class FileHandler extends EventEmitter {
             const parsedJSON = JSON.parse(body);
             parsedJSON.updated_date = new Date();
             const json = JSON.stringify(parsedJSON);
-            fs.writeFileSync('vatsimData.json', json);
-            const oldFile = fs.readFileSync('oldData.json');
-            const newFile = fs.readFileSync('vatsimData.json');
+            fs.writeFileSync("vatsimData.json", json);
+            const oldFile = fs.readFileSync("oldData.json");
+            const newFile = fs.readFileSync("vatsimData.json");
             const oldParsed = JSON.parse(oldFile.toString());
             const newParsed = JSON.parse(newFile.toString());
-            const diff = compareJson.map(oldParsed.clients, newParsed.clients);
+            const pilotDiff = compareJson.map(oldParsed.pilots, newParsed.pilots);
+            const controllerDiff = compareJson.map(oldParsed.controllers, newParsed.controllers);
             const result = {};
-            for (const { type, data } of Object.values(diff)) {
+            for (const { type, data } of Object.values(pilotDiff)) {
+                if (result[type]) {
+                    result[type].push(data);
+                }
+                else {
+                    result[type] = [data];
+                }
+            }
+            for (const { type, data } of Object.values(controllerDiff)) {
                 if (result[type]) {
                     result[type].push(data);
                 }
@@ -60,18 +69,18 @@ class FileHandler extends EventEmitter {
                 var newControllers = [];
                 for (let i = 0; i < result.created.length; i++) {
                     const client = result.created[i];
-                    if (client.clienttype == 'PILOT') {
+                    if (client.altitude) {
                         newPilots.push(client);
                     }
-                    else if (client.clienttype == 'ATC') {
+                    else {
                         newControllers.push(client);
                     }
                 }
                 if (newControllers.length > 0) {
-                    process.emit('newController', newControllers);
+                    process.emit("newController", newControllers);
                 }
                 if (newPilots.length > 0) {
-                    process.emit('newPilot', newPilots);
+                    process.emit("newPilot", newPilots);
                 }
             }
         });
@@ -82,42 +91,58 @@ class FileHandler extends EventEmitter {
             const parsedJSON = JSON.parse(body);
             parsedJSON.updated_date = new Date();
             const json = JSON.stringify(parsedJSON);
-            fs.writeFileSync('vatsimData.json', json);
+            fs.writeFileSync("vatsimData.json", json);
         });
     }
     downloadFile() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let urls = yield this.getUrls();
+            const url = urls.data.v3[Math.floor(Math.random() * urls.data.v3.length)];
+            return new Promise((resolve, reject) => {
+                request(url, (error, response, body) => {
+                    if (error)
+                        reject(error);
+                    if (response.statusCode !== 200) {
+                        reject("Invalid status code <" + response.statusCode + ">");
+                    }
+                    resolve(body);
+                });
+            });
+        });
+    }
+    getUrls() {
         return new Promise((resolve, reject) => {
-            request('http://cluster.data.vatsim.net/vatsim-data.json', (error, response, body) => {
+            request("https://status.vatsim.net/status.json", (error, response, body) => {
                 if (error)
                     reject(error);
                 if (response.statusCode !== 200) {
-                    reject('Invalid status code <' + response.statusCode + '>');
+                    reject("Invalid status code <" + response.statusCode + ">");
                 }
-                resolve(body);
+                resolve(JSON.parse(body));
             });
         });
     }
     loadFile() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.shouldUpdate();
-            return (JSON.parse(fs.readFileSync('vatsimData.json', { encoding: 'utf-8' })));
+            return JSON.parse(fs.readFileSync("vatsimData.json", { encoding: "utf-8" }));
         });
     }
 }
-var compareJson = function () {
+var compareJson = (function () {
     return {
-        VALUE_CREATED: 'created',
-        VALUE_UPDATED: 'updated',
-        VALUE_DELETED: 'deleted',
-        VALUE_UNCHANGED: 'unchanged',
+        VALUE_CREATED: "created",
+        VALUE_UPDATED: "updated",
+        VALUE_DELETED: "deleted",
+        VALUE_UNCHANGED: "unchanged",
         map: function (obj1, obj2) {
             if (this.isFunction(obj1) || this.isFunction(obj2)) {
-                console.log('Invalid argument. Function given, object expected.');
+                console.log("Invalid argument. Function given, object expected.");
             }
             if (this.isValue(obj1) || this.isValue(obj2)) {
                 return {
                     type: this.compareValues(obj1, obj2),
-                    data: obj1 === undefined ? obj2 : obj1
+                    data: obj1 === undefined ? obj2 : obj1,
                 };
             }
             var diff = {};
@@ -143,7 +168,9 @@ var compareJson = function () {
             if (value1 === value2) {
                 return this.VALUE_UNCHANGED;
             }
-            if (this.isDate(value1) && this.isDate(value2) && value1.getTime() === value2.getTime()) {
+            if (this.isDate(value1) &&
+                this.isDate(value2) &&
+                value1.getTime() === value2.getTime()) {
                 return this.VALUE_UNCHANGED;
             }
             if (value1 === undefined) {
@@ -155,20 +182,20 @@ var compareJson = function () {
             return this.VALUE_UPDATED;
         },
         isFunction: function (x) {
-            return Object.prototype.toString.call(x) === '[object Function]';
+            return Object.prototype.toString.call(x) === "[object Function]";
         },
         isArray: function (x) {
-            return Object.prototype.toString.call(x) === '[object Array]';
+            return Object.prototype.toString.call(x) === "[object Array]";
         },
         isDate: function (x) {
-            return Object.prototype.toString.call(x) === '[object Date]';
+            return Object.prototype.toString.call(x) === "[object Date]";
         },
         isObject: function (x) {
-            return Object.prototype.toString.call(x) === '[object Object]';
+            return Object.prototype.toString.call(x) === "[object Object]";
         },
         isValue: function (x) {
             return !this.isObject(x) && !this.isArray(x);
-        }
+        },
     };
-}();
+})();
 export default FileHandler;

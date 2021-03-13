@@ -1,45 +1,48 @@
-interface Client {
+interface Pilot {
+    cid: number;
+    name: string;
     callsign: string;
-    cid: string;
-    realname: string;
-    clienttype: string;
-    frequency: string;
+    server: string;
+    pilot_rating: number;
     latitude: number;
     longitude: number;
     altitude: number;
     groundspeed: number;
-    planned_aircraft: string;
-    planned_tascruise: string;
-    planned_depairport: string;
-    planned_altitude: string;
-    planned_destairport: string;
-    server: string;
-    protrevision: number;
-    rating: number;
-    transponder: number;
-    facilitytype: number;
-    visualrange: number;
-    planned_revision: string;
-    planned_flighttype: string;
-    planned_deptime: string;
-    planned_actdeptime: string;
-    planned_hrsenroute: string;
-    planned_minenroute: string;
-    planned_hrsfuel: string;
-    planned_minfiel: string;
-    planned_altairport: string;
-    planned_remarks: string;
-    planned_route: string;
-    planned_depairport_lat: number;
-    planned_depairport_lon: number;
-    planned_destairport_lat: number;
-    planned_destairport_lon: number;
-    atis_message: string;
-    time_last_atis_received: string;
-    time_logon: string;
+    transponder: string;
     heading: number;
     qnh_i_hg: number;
     qnh_mb: number;
+    flight_plan?: {
+        flight_rules: string;
+        aircraft: string;
+        aircraft_faa: string;
+        aircraft_short: string;
+        departure: string;
+        arrival: string;
+        alternate: string;
+        cruise_tas: string;
+        altitude: string;
+        deptime: string;
+        enroute_time: string;
+        fuel_time: string;
+        remarks: string;
+        route: string;
+    };
+    logon_time: string;
+    last_updated: string;
+}
+interface Controller {
+    cid: number;
+    name: string;
+    callsign: string;
+    frequency: string;
+    facility: number;
+    rating: number;
+    server: string;
+    visual_range: number;
+    text_atis?: Array<string>;
+    last_updated: string;
+    logon_time: string;
 }
 export declare class DataHandler {
     private fileHandler;
@@ -49,7 +52,7 @@ export declare class DataHandler {
      *
      * @param {string} type Type of client to return (all, pilots or controllers).
      *
-     * @returns {Number} The number of clients based on the type.
+     * @returns {Number | undefined} The number of clients based on the type.
      */
     getCount(type: string): Promise<number | undefined>;
     /**
@@ -57,7 +60,7 @@ export declare class DataHandler {
      *
      * @param {string} airport Airport ICAO code to get information for.
      *
-     * @returns {Array} An array containing all clients relating to a given airport ICAO.
+     * @returns {Array | undefined} An array containing all clients relating to a given airport ICAO.
      */
     getAirportInfo(airport: string): Promise<Object | undefined>;
     /**
@@ -73,13 +76,13 @@ export declare class DataHandler {
      *
      * @returns {Object} An object containing flight information.
      */
-    getFlightInfo(callsign: string): Promise<Client>;
+    getFlightInfo(callsign: string): Promise<Pilot>;
     /**
      * Get all connected pilots.
      *
      * @returns {Array} An array containing all connected pilots.
      */
-    getClients(): Promise<Array<Client>>;
+    getClients(): Promise<Array<Pilot>>;
     /**
      * Get the flight information for a connected pilot.
      *
@@ -87,19 +90,19 @@ export declare class DataHandler {
      *
      * @returns {Object} An object containing flight information.
      */
-    getClientDetails(cid: number): Promise<Client>;
+    getClientDetails(cid: number): Promise<Pilot>;
     /**
      * Get all the connected supervisors.
      *
      * @returns {Array} An array containing all connected supervisors.
      */
-    getSupervisors(): Promise<Array<Client>>;
+    getSupervisors(): Promise<Array<Controller>>;
     /**
      * Get all the connected controllers.
      *
      * @returns {Array} An array containing all connected controllers.
      */
-    getControllers(): Promise<Array<Client>>;
+    getControllers(): Promise<Array<Controller>>;
 }
 declare const handler: DataHandler;
 export { handler };
