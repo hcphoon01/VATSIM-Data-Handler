@@ -46,8 +46,7 @@ class FileHandler extends EventEmitter {
     fs.copyFile("vatsimData.json", "oldData.json", (err) => {
       if (err) console.log(err);
     });
-    let body = await this.downloadFile();
-    const parsedJSON = JSON.parse(body);
+    let parsedJSON = await this.downloadFile();
 
     parsedJSON.updated_date = new Date();
     const json = JSON.stringify(parsedJSON);
@@ -100,8 +99,7 @@ class FileHandler extends EventEmitter {
   }
 
   async initialUpdate() {
-    let body = await this.downloadFile();
-    const parsedJSON = JSON.parse(body);
+    let parsedJSON = await this.downloadFile();
 
     parsedJSON.updated_date = new Date();
     const json = JSON.stringify(parsedJSON);
@@ -112,8 +110,8 @@ class FileHandler extends EventEmitter {
     let urls = await this.getUrls();
     const url = urls.data!.v3[Math.floor(Math.random() * urls.data!.v3.length)];
     return new Promise((resolve, reject) => {
-      request(
-        url,
+      request.get(
+        { url: url, json: true },
         (
           error: RequestResponse,
           response: RequestResponse,

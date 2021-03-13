@@ -36,8 +36,7 @@ class FileHandler extends EventEmitter {
                 if (err)
                     console.log(err);
             });
-            let body = yield this.downloadFile();
-            const parsedJSON = JSON.parse(body);
+            let parsedJSON = yield this.downloadFile();
             parsedJSON.updated_date = new Date();
             const json = JSON.stringify(parsedJSON);
             fs.writeFileSync("vatsimData.json", json);
@@ -87,8 +86,7 @@ class FileHandler extends EventEmitter {
     }
     initialUpdate() {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield this.downloadFile();
-            const parsedJSON = JSON.parse(body);
+            let parsedJSON = yield this.downloadFile();
             parsedJSON.updated_date = new Date();
             const json = JSON.stringify(parsedJSON);
             fs.writeFileSync("vatsimData.json", json);
@@ -99,7 +97,7 @@ class FileHandler extends EventEmitter {
             let urls = yield this.getUrls();
             const url = urls.data.v3[Math.floor(Math.random() * urls.data.v3.length)];
             return new Promise((resolve, reject) => {
-                request(url, (error, response, body) => {
+                request.get({ url: url, json: true }, (error, response, body) => {
                     if (error)
                         reject(error);
                     if (response.statusCode !== 200) {
