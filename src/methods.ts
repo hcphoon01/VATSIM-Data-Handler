@@ -210,7 +210,6 @@ export class DataHandler {
       for (let i = 0; i < parsed.atis.length; i++) {
         const atis = parsed.atis[i];
         if (atis.callsign.includes(airport)) {
-          console.log(atis);
           airportInfo["atis"] = atis;
         }
       }
