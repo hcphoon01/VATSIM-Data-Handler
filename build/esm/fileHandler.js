@@ -110,7 +110,7 @@ class FileHandler extends EventEmitter {
     }
     getUrls() {
         return new Promise((resolve, reject) => {
-            request("https://status.vatsim.net/status.json", (error, response, body) => {
+            request.get({ url: "https://status.vatsim.net/status.json", json: true }, (error, response, body) => {
                 if (error)
                     reject(error);
                 if (response.statusCode !== 200) {
