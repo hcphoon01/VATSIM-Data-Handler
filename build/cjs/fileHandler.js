@@ -118,7 +118,7 @@ class FileHandler extends EventEmitter {
                 if (response.statusCode !== 200) {
                     reject("Invalid status code <" + response.statusCode + ">");
                 }
-                resolve(JSON.parse(body));
+                resolve(body);
             });
         });
     }
